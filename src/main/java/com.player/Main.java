@@ -6,7 +6,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.player.FileLoader;
 import com.player.MPV;
 import com.player.Playable;
 import com.player.PlayableLoader;
