@@ -5,3 +5,5 @@ tmp/
 
 *.class
 target
+out
+lib
