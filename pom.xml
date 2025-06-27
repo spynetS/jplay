@@ -27,33 +27,28 @@
   </dependencies>
 
   <build>
-	<plugins>
-
-	<plugin>
-	  <artifactId>maven-assembly-plugin</artifactId>
-	  <version>3.3.0</version>
-	  <configuration>
-		<finalName>${project.artifactId}</finalName> <!-- This removes the suffix -->
-		<appendAssemblyId>false</appendAssemblyId>
-		<descriptorRefs>
-		  <descriptorRef>jar-with-dependencies</descriptorRef>
-		</descriptorRefs>
-		<archive>
-		  <manifest>
-			<mainClass>com.jplay.Main</mainClass>
-		  </manifest>
-		</archive>
-	  </configuration>
-	  <executions>
-		<execution>
-		  <id>make-assembly</id>
-		  <phase>package</phase>
-		  <goals>
-			<goal>single</goal>
-		  </goals>
-		</execution>
-	  </executions>
-	</plugin>
-	</plugins>
+		  <plugins>
+  <plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-shade-plugin</artifactId>
+    <version>3.5.0</version>
+    <executions>
+      <execution>
+        <phase>package</phase>
+        <goals>
+          <goal>shade</goal>
+        </goals>
+        <configuration>
+          <createDependencyReducedPom>false</createDependencyReducedPom>
+          <transformers>
+            <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+              <mainClass>com.jplay.Main</mainClass> <!-- Replace with your actual main class -->
+            </transformer>
+          </transformers>
+        </configuration>
+      </execution>
+    </executions>
+  </plugin>
+</plugins>
   </build>
 </project>
