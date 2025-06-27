@@ -1,4 +1,4 @@
-package com.player;
+package com.jplay;
 
 import java.io.*;
 import java.util.regex.*;

@@ -4,9 +4,9 @@
                              http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>com.player</groupId>
-  <artifactId>player</artifactId>
-  <version>1.0.0</version>
+  <groupId>com.jplay</groupId>
+  <artifactId>jplay</artifactId>
+  <version>1.0.3</version>
 
   <properties>
     <maven.compiler.source>17</maven.compiler.source>
@@ -27,46 +27,33 @@
   </dependencies>
 
   <build>
-    <plugins>
-      <!-- Create executable JAR -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jar-plugin</artifactId>
-        <version>3.2.2</version>
-        <configuration>
-          <archive>
-            <manifest>
-              <mainClass>com.player.Main</mainClass>
-            </manifest>
-          </archive>
-        </configuration>
-      </plugin>
+	<plugins>
 
-      <!-- Optionally build fat JAR with dependencies -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-assembly-plugin</artifactId>
-        <version>3.6.0</version>
-        <configuration>
-          <descriptorRefs>
-            <descriptorRef>jar-with-dependencies</descriptorRef>
-          </descriptorRefs>
-          <archive>
-            <manifest>
-              <mainClass>com.player.Main</mainClass>
-            </manifest>
-          </archive>
-        </configuration>
-        <executions>
-          <execution>
-            <id>make-assembly</id>
-            <phase>package</phase>
-            <goals>
-              <goal>single</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
+	<plugin>
+	  <artifactId>maven-assembly-plugin</artifactId>
+	  <version>3.3.0</version>
+	  <configuration>
+		<finalName>${project.artifactId}</finalName> <!-- This removes the suffix -->
+		<appendAssemblyId>false</appendAssemblyId>
+		<descriptorRefs>
+		  <descriptorRef>jar-with-dependencies</descriptorRef>
+		</descriptorRefs>
+		<archive>
+		  <manifest>
+			<mainClass>com.jplay.Main</mainClass>
+		  </manifest>
+		</archive>
+	  </configuration>
+	  <executions>
+		<execution>
+		  <id>make-assembly</id>
+		  <phase>package</phase>
+		  <goals>
+			<goal>single</goal>
+		  </goals>
+		</execution>
+	  </executions>
+	</plugin>
+	</plugins>
   </build>
 </project>

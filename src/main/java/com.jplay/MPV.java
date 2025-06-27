@@ -1,4 +1,4 @@
-package com.player;
+package com.jplay;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -25,8 +25,6 @@ public class MPV {
 
 		// Check if file exists
 		File file = new File(videoPath);
-		System.out.println("File exists? " + file.exists());
-
 		// Format start time
 		startSeconds = startSeconds == -1 ? 0 : startSeconds;
 		String formattedStart = formatSeconds(startSeconds);
@@ -40,8 +38,6 @@ public class MPV {
 											 "--input-ipc-server=" + MPV_SOCKET,
 											 "--msg-level=all=no"
 											 );
-		System.out.println("Running command: " + String.join(" ", command));
-
 		// Start the process
 		ProcessBuilder builder = new ProcessBuilder(command);
 		builder.redirectErrorStream(true); // Merge stdout + stderr

@@ -1,4 +1,4 @@
-package com.player;
+package com.jplay;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -6,18 +6,18 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.player.MPV;
-import com.player.Playable;
-import com.player.PlayableLoader;
-import com.player.SQLitePlayableLoader;
+import com.jplay.MPV;
+import com.jplay.Playable;
+import com.jplay.PlayableLoader;
+import com.jplay.SQLitePlayableLoader;
 
 import picocli.CommandLine;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Parameters;
 
-@Command(name = "player", mixinStandardHelpOptions = true, version = "player 1.0",
-         description = "Movie/show player and manager", subcommands = {
+@Command(name = "jplay", mixinStandardHelpOptions = true, version = "jplay 1.0.3",
+         description = "Movie/show jplay and manager", subcommands = {
     Main.ListCommand.class
 })
 public class Main implements Runnable {

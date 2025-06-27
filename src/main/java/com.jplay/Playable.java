@@ -1,4 +1,4 @@
-package com.player;
+package com.jplay;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -23,7 +23,6 @@ public class Playable implements Serializable {
 
 	public void play(){
 		try{
-			System.out.println(this.lastPos);
 			var process = mpv.startMPV(this.path, this.lastPos);
 			this.lastPos =  mpv.waitForMPVExit(process);
 		}catch(IOException e){

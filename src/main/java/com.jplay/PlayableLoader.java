@@ -1,7 +1,7 @@
-package com.player;
+package com.jplay;
 import java.util.List;
 
-import com.player.Playable;
+import com.jplay.Playable;
 
 public interface PlayableLoader {
 

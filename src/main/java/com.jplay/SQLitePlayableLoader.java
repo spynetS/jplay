@@ -1,4 +1,4 @@
-package com.player;
+package com.jplay;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -6,9 +6,25 @@ import java.util.List;
 import java.io.File;
 
 public class SQLitePlayableLoader implements PlayableLoader {
-    private static final String DB_URL = "jdbc:sqlite:playables.db";
+    private static final String DB_PATH = System.getProperty("user.home") + "/.config/jplay/jplay.db";
+	private static final String DB_URL = "jdbc:sqlite:" + DB_PATH;
 
     public SQLitePlayableLoader() {
+		try {
+            // Ensure parent directories exist
+            File dbFile = new File(DB_PATH);
+            File parentDir = dbFile.getParentFile();
+            if (!parentDir.exists()) {
+                boolean created = parentDir.mkdirs();  // creates directories if not existing
+                if (created) {
+                    System.out.println("Created directories: " + parentDir.getAbsolutePath());
+                } else {
+                    System.out.println("Failed to create directories: " + parentDir.getAbsolutePath());
+                }
+            }
+		}
+		catch(Exception e){}
+
         createTableIfNotExists();
     }
 
@@ -33,7 +49,6 @@ public class SQLitePlayableLoader implements PlayableLoader {
 
 	@Override
 	public void registerPlayable(Playable playable) {
-		System.out.println(playable);
 		String sql = """
 			INSERT INTO playables (title, path, length, lastPos, season, episode)
 			VALUES (?, ?, ?, ?, ?, ?)
@@ -142,7 +157,6 @@ public class SQLitePlayableLoader implements PlayableLoader {
 						playable.lastPos = rs.getDouble("lastPos");
 						playable.season = rs.getInt("season");
 						playable.episode = rs.getInt("episode");
-						System.out.println(playable);
 
 						// Check if lastPos close to length (e.g. > 90% watched)
 						if (playable.length > 0 && playable.lastPos / playable.length > 0.9) {
