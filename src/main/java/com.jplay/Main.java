@@ -16,7 +16,7 @@ import picocli.CommandLine.Option;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Parameters;
 
-@Command(name = "jplay", mixinStandardHelpOptions = true, version = "jplay 1.1.0",
+@Command(name = "jplay", mixinStandardHelpOptions = true, version = "jplay 1.1.1",
          description = "Movie/show jplay and manager", subcommands = {
     Main.ListCommand.class
 })
@@ -27,7 +27,7 @@ public class Main implements Runnable {
     File inputPath;
 
         @Option(names = {"--season", "-s"}, description = "Season number")
-    private Integer season = 1;
+    private Integer season = -1;
 
 
     @Option(names = {"--episode", "-e"}, description = "Episode number")

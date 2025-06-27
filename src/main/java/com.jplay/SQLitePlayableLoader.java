@@ -96,40 +96,72 @@ public class SQLitePlayableLoader implements PlayableLoader {
     }
 
     @Override
-    public Playable getPlayable(String search, int season, int episode) {
-		if(season == -1 || episode == -1){
-			return this.getLatestPlayable(search);
-		}
-        String sql = """
+public Playable getPlayable(String search, int season, int episode) {
+    // Case: latest
+    if (season == -1 && episode == -1) {
+        return this.getLatestPlayable(search);
+    }
+
+    String sql;
+    if (season == -1) {
+        // Episode specified, any season
+        sql = """
+            SELECT title, path, length, lastPos, season, episode
+            FROM playables
+            WHERE title = ? AND episode = ?
+            ORDER BY season ASC
+            LIMIT 1
+        """;
+    } else if (episode == -1) {
+        // Season specified, any episode
+        sql = """
+            SELECT title, path, length, lastPos, season, episode
+            FROM playables
+            WHERE title = ? AND season = ?
+            ORDER BY episode ASC
+            LIMIT 1
+        """;
+    } else {
+        // Both specified
+        sql = """
             SELECT title, path, length, lastPos, season, episode
             FROM playables
             WHERE title = ? AND season = ? AND episode = ?
-			""";
-
-			try (Connection conn = DriverManager.getConnection(DB_URL);
-				 PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-				pstmt.setString(1, search);
-				pstmt.setInt(2, season);
-				pstmt.setInt(3, episode);
-
-				try (ResultSet rs = pstmt.executeQuery()) {
-					if (rs.next()) {
-						Playable playable = new Playable();
-						playable.title = rs.getString("title");
-						playable.path = rs.getString("path");
-						playable.length = rs.getDouble("length");
-						playable.lastPos = rs.getDouble("lastPos");
-						playable.season = rs.getInt("season");
-						playable.episode = rs.getInt("episode");
-						return playable;
-					}
-				}
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-        return null;
+        """;
     }
+
+    try (Connection conn = DriverManager.getConnection(DB_URL);
+         PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+        pstmt.setString(1, search);
+        if (season == -1) {
+            pstmt.setInt(2, episode);
+        } else if (episode == -1) {
+            pstmt.setInt(2, season);
+        } else {
+            pstmt.setInt(2, season);
+            pstmt.setInt(3, episode);
+        }
+
+        try (ResultSet rs = pstmt.executeQuery()) {
+            if (rs.next()) {
+                Playable playable = new Playable();
+                playable.title = rs.getString("title");
+                playable.path = rs.getString("path");
+                playable.length = rs.getDouble("length");
+                playable.lastPos = rs.getDouble("lastPos");
+                playable.season = rs.getInt("season");
+                playable.episode = rs.getInt("episode");
+                return playable;
+            }
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+
+    return null;
+}
+
 
     // Example getLatestPlayable implementation:
     // Returns last watched episode or next episode if last is almost done (lastPos near length)
