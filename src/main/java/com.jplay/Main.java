@@ -16,7 +16,7 @@ import picocli.CommandLine.Option;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Parameters;
 
-@Command(name = "jplay", mixinStandardHelpOptions = true, version = "jplay 1.1.1",
+@Command(name = "jplay", mixinStandardHelpOptions = true, version = "jplay 1.1.2",
          description = "Movie/show jplay and manager", subcommands = {
     Main.ListCommand.class
 })
@@ -46,6 +46,7 @@ public class Main implements Runnable {
         SQLitePlayableLoader loader = new SQLitePlayableLoader();
         if (inputPath != null && inputPath.exists()) {
             if(inputPath.isDirectory()){
+                System.out.println("Playing folder");
                 // registar all episodes in the foldern
                 List<Playable> players = getPlayablesInFolder(inputPath.getAbsolutePath());
                 for(Playable player : players){
@@ -59,11 +60,12 @@ public class Main implements Runnable {
             }
             else if(inputPath.isFile()){
                 try {
+                    System.out.println("Playing file");
                     // load the file
                     Playable p = loadPlayable(inputPath);
                     loader.registerPlayable(p);
                     // get it from the database (this is if it allready exists so we get the right lastpos)
-                    p = loader.getPlayable(p.title,season,episode);
+                    p = loader.getPlayable(p.title,p.season,p.episode);
                     p.play();
                     // save the new lastpos
                     loader.registerPlayable(p);
@@ -76,13 +78,14 @@ public class Main implements Runnable {
 
         }
         else if (inputPath != null) {
-
+            System.out.println("Playing title");
             Playable p = loader.getPlayable(inputPath.getName(),season,episode);
             p.play();
             loader.registerPlayable(p);
 
         }
         else if (title != null){
+            System.out.println("Playing title (--title)");
             Playable p = loader.getPlayable(title,season,episode);
             p.play();
             loader.registerPlayable(p);
