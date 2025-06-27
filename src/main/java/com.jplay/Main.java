@@ -16,7 +16,7 @@ import picocli.CommandLine.Option;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Parameters;
 
-@Command(name = "jplay", mixinStandardHelpOptions = true, version = "jplay 1.0.3",
+@Command(name = "jplay", mixinStandardHelpOptions = true, version = "jplay 1.1.0",
          description = "Movie/show jplay and manager", subcommands = {
     Main.ListCommand.class
 })
@@ -143,6 +143,9 @@ public class Main implements Runnable {
         @Option(names = {"--title"}, description = "Only list episodes for this title")
         String title;
 
+        @Option(names = "-p", description = "Show path to the video file")
+        boolean showPath;
+
         @Override
         public void run() {
             PlayableLoader loader = new SQLitePlayableLoader();
@@ -152,9 +155,17 @@ public class Main implements Runnable {
                 if (episodes.isEmpty()) {
                     System.out.println("No episodes found for: " + title);
                 } else {
-                    episodes.forEach(p -> System.out.printf(
+                    if(!showPath){
+                        episodes.forEach(p -> System.out.printf(
+                        "%s - S%02dE%02d lastPos=%.2f\n",
+                        p.title, p.season, p.episode, p.lastPos));
+                    }
+                    else{
+                        episodes.forEach(p -> System.out.printf(
                         "%s - S%02dE%02d [%s] lastPos=%.2f\n",
                         p.title, p.season, p.episode, p.path, p.lastPos));
+                    }
+
                 }
             } else {
                 List<String> allTitles = loader.getAllTitles();
