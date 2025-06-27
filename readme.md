@@ -10,6 +10,26 @@ you stopped last time.
 If the file is part of a show (parsed from file name) and 90% was 
 watched. The next episode will start playing instead.
 
+## Install
+To build
+```bash
+mvn clean package
+```
+this will create a jar file at `target/jplay.jar`
+it can be run with
+```bash
+java -jar jplay.jar
+```
+#### Example 
+Move the jar file to `usr/local/bin`
+then create a bash script which will run that jar file
+```bash
+sudo ln -s $PWD/target/jplay.jar /usr/local/bin/jplay.jar
+echo -e '#!/bin/bash\njava -jar /usr/local/bin/jplay.jar "$@"' | sudo tee /usr/local/bin/jplay > /dev/null
+sudo chmod 755 /usr/local/bin/jplay
+```
+
+
 ## How to use
 It's cli where you can start a file
 ```bash
