@@ -33,7 +33,7 @@ sudo chmod 755 /usr/local/bin/jplay
 ## How to use
 It's cli where you can start a file
 ```bash
-jplay ./he.Wire.S01E01.1080p.BluRay.x265-RARBG.mp4
+jplay ./The.Wire.S01E01.1080p.BluRay.x265-RARBG.mp4
 ```
 or a folder with episodes
 ```bash
