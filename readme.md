@@ -11,24 +11,21 @@ If the file is part of a show (parsed from file name) and 90% was
 watched. The next episode will start playing instead.
 
 ## Install
-To build
+To install use the install script. It will build the project to a jar file
+and then place it in `/usr/share/java/`. It will then create a shell
+script running `java -jar` on the jar file.
 ```bash
-mvn clean package
-```
-this will create a jar file at `target/jplay.jar`
-it can be run with
-```bash
-java -jar jplay.jar
-```
-#### Example 
-Move the jar file to `usr/local/bin`
-then create a bash script which will run that jar file
-```bash
-sudo ln -s $PWD/target/jplay.jar /usr/local/bin/jplay.jar
-echo -e '#!/bin/bash\njava -jar /usr/local/bin/jplay.jar "$@"' | sudo tee /usr/local/bin/jplay > /dev/null
-sudo chmod 755 /usr/local/bin/jplay
+./install.sh
 ```
 
+## Uninstall
+To uninstall just run the
+```bash
+./uninstall.sh
+```
+or just remove the files
+`/usr/share/java/jplay`
+`/usr/;ocal/bin/jplay`
 
 ## How to use
 It's cli where you can start a file
