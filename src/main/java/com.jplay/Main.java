@@ -162,13 +162,17 @@ public class Main implements Runnable {
                 } else {
                     if(!showPath){
                         episodes.forEach(p -> System.out.printf(
-                        "%s - S%02dE%02d lastPos=%.2f\n",
-                        p.title, p.season, p.episode, p.lastPos));
+                                                                "%s - S%02dE%02d seen=%.2f%%%n",
+                                                                p.title, p.season, p.episode, (p.lastPos / p.length * 100)
+                                                                ));
                     }
                     else{
                         episodes.forEach(p -> System.out.printf(
-                        "%s - S%02dE%02d [%s] lastPos=%.2f\n",
-                        p.title, p.season, p.episode, p.path, p.lastPos));
+                                            "%s - S%02dE%02d [%s] %.2f%\n",
+                                            p.title, p.season, p.episode, p.path,
+                                            (p.lastPos / p.length * 100)
+                                            ));
+
                     }
 
                 }
