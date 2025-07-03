@@ -5,7 +5,7 @@
 set -e  # Exit on any error
 
 APP_NAME="jplay"
-VERSION="1.1.3"
+VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
 INSTALL_DIR="/usr/local/share/java/$APP_NAME"
 BIN_PATH="/usr/local/bin/$APP_NAME"
 

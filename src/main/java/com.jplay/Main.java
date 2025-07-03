@@ -16,7 +16,9 @@ import picocli.CommandLine.Option;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Parameters;
 
-@Command(name = "jplay", mixinStandardHelpOptions = true, version = "jplay 1.1.3",
+import com.jplay.MyVersionProvider;
+
+@Command(name = "jplay", mixinStandardHelpOptions = true,versionProvider = MyVersionProvider.class,
          description = "Movie/show jplay and manager", subcommands = {
     Main.ListCommand.class
 })
@@ -128,7 +130,7 @@ public class Main implements Runnable {
                 Guessit g = new Guessit(file.getName(),file.getAbsolutePath());
                 Playable p = new Playable();
                 p.title = g.getTitle();
-                p.path = file.getAbsolutePath();
+                p.path = file.getCanonicalPath();
                 p.length = g.getLength();     // You can set length later if you want
                 p.lastPos = -1;
                 p.season = g.getSeason();     // Default for movies, change if you want
