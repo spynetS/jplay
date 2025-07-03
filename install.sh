@@ -5,14 +5,14 @@
 set -e  # Exit on any error
 
 APP_NAME="jplay"
-VERSION="1.1.0"
+VERSION="1.1.3"
 INSTALL_DIR="/usr/local/share/java/$APP_NAME"
 BIN_PATH="/usr/local/bin/$APP_NAME"
 
 echo "🔧 Building the Java project with Maven..."
 mvn clean package
 
-JAR_FILE=$(find target -name "*.jar" | grep -v "sources\|javadoc" | head -n 1)
+JAR_FILE="target/$APP_NAME-$VERSION.jar"
 
 if [[ ! -f "$JAR_FILE" ]]; then
     echo "❌ Build failed or no JAR found."

@@ -16,7 +16,7 @@ import picocli.CommandLine.Option;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Parameters;
 
-@Command(name = "jplay", mixinStandardHelpOptions = true, version = "jplay 1.1.2",
+@Command(name = "jplay", mixinStandardHelpOptions = true, version = "jplay 1.1.3",
          description = "Movie/show jplay and manager", subcommands = {
     Main.ListCommand.class
 })
