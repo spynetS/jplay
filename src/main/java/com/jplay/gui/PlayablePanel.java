@@ -137,13 +137,13 @@ public class PlayablePanel extends JPanel {
 
 
     public void updatePlayable(Playable currentPlayable) {
-        title.setText(currentPlayable.title + " " + currentPlayable.episode);
+        title.setText(currentPlayable.title + " " + currentPlayable.season);
 		selectedPlayable = currentPlayable;
 
         OMDB omdb = new OMDB();
 
         try {
-            SeriesInfo info = omdb.searchIMDB(""); // you can pass currentPlayable.title
+            SeriesInfo info = omdb.getInfo(currentPlayable.title); // you can pass currentPlayable.title
             plot.setText(info.Plot);
             setImage(info.Poster);
 
