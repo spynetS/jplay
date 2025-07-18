@@ -1,10 +1,14 @@
 package com.jplay;
+import com.jplay.gui.*;
 
 import java.io.IOException;
 import java.nio.file.Path;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
 
 import com.jplay.MPV;
 import com.jplay.Playable;
@@ -20,7 +24,8 @@ import com.jplay.MyVersionProvider;
 
 @Command(name = "jplay", mixinStandardHelpOptions = true,versionProvider = MyVersionProvider.class,
          description = "Movie/show jplay and manager", subcommands = {
-    Main.ListCommand.class
+    Main.ListCommand.class,
+    Main.GUICommand.class,
 })
 public class Main implements Runnable {
     static String[] extensions = {".mp4", ".mkv", ".avi", ".mov", ".flv", ".wmv", ".webm"};
@@ -42,7 +47,10 @@ public class Main implements Runnable {
     private String title;
 
     public static void main(String[] args) {
-        CommandLine.run(new Main(), args);
+        SwingUtilities.invokeLater(() -> {
+            new JplayGui().setVisible(true);
+        });
+        //CommandLine.run(new Main(), args);
     }
 
     public void scanDefault(){
@@ -125,7 +133,7 @@ public class Main implements Runnable {
         return playables;
     }
 
-    private static void scanFolder(File folder, List<Playable> playables) {
+    public static void scanFolder(File folder, List<Playable> playables) {
         for (File file : folder.listFiles()) {
             if (file.isDirectory()) {
                 scanFolder(file, playables);  // Recurse into subfolders
@@ -201,4 +209,15 @@ public class Main implements Runnable {
         }
     }
 
+    @Command(name = "gui", description = "GUI")
+    static class GUICommand implements Runnable {
+
+        @Override
+        public void run() {
+            JplayGui window = new JplayGui();
+            //window.setTitle("Jplay");
+            window.setVisible(true);
+
+        }
+    }
 }
