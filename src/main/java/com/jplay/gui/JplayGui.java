@@ -1,36 +1,46 @@
 package com.jplay.gui;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
+import java.awt.*;
+import javax.swing.*;
+import com.formdev.flatlaf.FlatLightLaf;
 
 public class JplayGui extends JFrame {
-	public JplayGui (){
-                setTitle("JFrame with Left and Center Panels");
-                setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-                setSize(800, 600);
-                setLocationRelativeTo(null); // Center on screen
-
-                // Set layout for the frame
-                setLayout(new BorderLayout());
-
-
-                // Center/right panel (main content area)
-                PlayablePanel centerPanel = new PlayablePanel();
-                centerPanel.setBackground(Color.WHITE);
-
-                // Left panel (e.g., sidebar)
-                JPanel leftPanel = new PlayableList(centerPanel);
-                leftPanel.setBackground(Color.LIGHT_GRAY);
-                leftPanel.setPreferredSize(new Dimension(200, 0)); // fixed width
-
-                // Add panels to the frame
-                add(leftPanel, BorderLayout.WEST);
-                add(centerPanel, BorderLayout.CENTER);
+    public JplayGui() {
+        // Modern Look and Feel
+        try {
+            UIManager.setLookAndFeel(new FlatLightLaf());
+        } catch (Exception ex) {
+            System.err.println("Failed to initialize LaF");
         }
+
+        setTitle("JPlay");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setSize(1000, 700);
+        setLocationRelativeTo(null); // Center on screen
+        setLayout(new BorderLayout(10, 10)); // spacing
+
+        // Top Header
+        JLabel headerLabel = new JLabel("🎵 JPlay Media Browser");
+        headerLabel.setFont(new Font("SansSerif", Font.BOLD, 22));
+        headerLabel.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 10));
+        add(headerLabel, BorderLayout.NORTH);
+
+
+        // Main Content Area
+        PlayablePanel centerPanel = new PlayablePanel();
+        centerPanel.setBackground(Color.WHITE);
+        centerPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        add(centerPanel, BorderLayout.CENTER);
+
+        // Left Sidebar
+        JPanel leftPanel = new PlayableList(centerPanel);
+        leftPanel.setBackground(new Color(245, 245, 245));
+        leftPanel.setPreferredSize(new Dimension(220, 0));
+        leftPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 1, Color.GRAY));
+        add(leftPanel, BorderLayout.WEST);
+
+
+        // Padding around the whole frame
+        getRootPane().setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+    }
 }
