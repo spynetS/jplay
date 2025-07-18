@@ -28,7 +28,10 @@ public class Main implements Runnable {
     @Parameters(index = "0", description = "The path to scan/play", arity = "0..1")
     File inputPath;
 
-        @Option(names = {"--season", "-s"}, description = "Season number")
+    @Option(names = {"--home"}, description = "The default scan path")
+    File defaultPath = new File(System.getProperty("user.home"), "Movies");
+
+    @Option(names = {"--season", "-s"}, description = "Season number")
     private Integer season = -1;
 
 
@@ -42,10 +45,22 @@ public class Main implements Runnable {
         CommandLine.run(new Main(), args);
     }
 
+    public void scanDefault(){
+        SQLitePlayableLoader loader = new SQLitePlayableLoader();
+        if(defaultPath != null && defaultPath.isDirectory()){
+            List<Playable> players = getPlayablesInFolder(defaultPath.getAbsolutePath());
+            for(Playable player : players){
+                // log new found fotage
+                // System.out.println("Found: "+player.title);
+                loader.registerPlayable(player);
+            }
+        }
+    }
 
     @Override
     public void run() {
         SQLitePlayableLoader loader = new SQLitePlayableLoader();
+        scanDefault();
         if (inputPath != null && inputPath.exists()) {
             if(inputPath.isDirectory()){
                 System.out.println("Playing folder");
@@ -154,7 +169,6 @@ public class Main implements Runnable {
         @Override
         public void run() {
             PlayableLoader loader = new SQLitePlayableLoader();
-
             if (title != null) {
                 List<Playable> episodes = loader.getAllEpisodes(title);
                 if (episodes.isEmpty()) {
