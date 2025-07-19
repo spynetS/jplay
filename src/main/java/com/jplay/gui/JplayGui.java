@@ -27,7 +27,7 @@ public class JplayGui extends JFrame {
 
         setTitle("🎵 JPlay");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(1000, 700);
+        setSize(1000, 750);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout(10, 10));
 
