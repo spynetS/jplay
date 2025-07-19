@@ -1,7 +1,9 @@
 package com.jplay.gui;
 
 import com.jplay.*;
+import com.jplay.loaders.SQLitePlayableLoader;
 
+import java.util.List;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -17,8 +19,10 @@ public class PlayableList extends JPanel {
 	public PlayableList(PlayablePanel playablePanel){
 		this.playablePanel = playablePanel;
 
-		ArrayList<Playable> playables = new ArrayList<>();
-		Main.scanFolder(new File("/home/spy/Movies"),playables);
+		SQLitePlayableLoader loader = new SQLitePlayableLoader();
+		List<Playable> playables = loader.getAllEntries();
+
+
 		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		ArrayList<String> added = new ArrayList<>();
 		for(Playable p : playables){

@@ -1,4 +1,4 @@
-package com.jplay;
+package com.jplay.loaders;
 import java.util.List;
 
 import com.jplay.Playable;
@@ -18,5 +18,5 @@ public interface PlayableLoader {
 
 	public List<Playable> getAllEpisodes(String title);
 	public List<String> getAllTitles();
-	
+	public List<Playable> getAllEntries();
 }

@@ -3,19 +3,22 @@ package com.jplay.gui;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Properties;
 
 import com.jplay.Playable;
-import com.jplay.PlayableLoader;
-import com.jplay.SQLitePlayableLoader;
-import com.jplay.gui.OMDB;
-import com.jplay.gui.SeriesInfo;
+import com.jplay.loaders.PlayableLoader;
+import com.jplay.loaders.SQLitePlayableLoader;
+import com.jplay.omdb.OMDB;
+
 
 public class PlayablePanel extends JPanel {
 
 	PlayableLoader loader = new SQLitePlayableLoader();
 	Playable selectedPlayable;
+    private OMDB omdb = null;
 
     private JLabel title = new JLabel();
     private JTextArea plot = new JTextArea();
@@ -32,6 +35,23 @@ public class PlayablePanel extends JPanel {
 
     public PlayablePanel(JFrame frame) {
 		this.frame = frame;
+
+        // init omdb
+        try{
+			//retrive apikey
+			Properties appProps = new Properties();
+			appProps.load(new FileInputStream("/home/spy/.config/jplay/config.properties"));
+			String apikey = appProps.getProperty("apikey");
+			if (apikey != null) {
+				omdb = new OMDB(apikey);
+			}
+
+
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+
+
 		episodeList.setCellRenderer(new ListCellRenderer<Playable>() {
 				@Override
 				public Component getListCellRendererComponent(
@@ -142,12 +162,10 @@ public class PlayablePanel extends JPanel {
         title.setText(currentPlayable.title + " " + currentPlayable.season);
 		selectedPlayable = currentPlayable;
 
-        OMDB omdb = new OMDB();
 
-        try {
-            SeriesInfo info = omdb.getInfo(currentPlayable.title); // you can pass currentPlayable.title
-            plot.setText(info.Plot);
-            setImage(info.Poster);
+
+            plot.setText(currentPlayable.plot);
+            setImage(currentPlayable.poster);
 
             // Clear and add new Playables (replace with real data)
             episodeListModel.clear();
@@ -157,8 +175,5 @@ public class PlayablePanel extends JPanel {
             episodeList.setSelectedIndex(0);
             lastWatchedLabel.setText("Last watched: None");
 
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 }

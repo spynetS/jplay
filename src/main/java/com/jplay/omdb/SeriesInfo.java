@@ -1,4 +1,4 @@
-package com.jplay.gui;
+package com.jplay.omdb;
 
 import java.util.List;
 
