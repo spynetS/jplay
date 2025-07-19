@@ -174,6 +174,9 @@ public class Main implements Runnable {
                 if (episodes.isEmpty()) {
                     System.out.println("No episodes found for: " + title);
                 } else {
+
+                    System.out.println(episodes.get(0).plot);
+                    System.out.println("-----------------------");
                     if(!showPath){
                         episodes.forEach(p -> System.out.printf(
                                                                 "%s - S%02dE%02d seen=%.2f%%%n",

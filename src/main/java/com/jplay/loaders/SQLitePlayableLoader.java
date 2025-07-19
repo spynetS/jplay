@@ -220,7 +220,7 @@ public class SQLitePlayableLoader implements PlayableLoader {
 		if (season == -1) {
 			// Episode specified, any season
 			sql = """
-				SELECT title, path, length, lastPos, season, episode
+				SELECT *
 				FROM playables
 				WHERE title = ? AND episode = ?
 				ORDER BY season ASC
@@ -229,7 +229,7 @@ public class SQLitePlayableLoader implements PlayableLoader {
 				} else if (episode == -1) {
 			// Season specified, any episode
 			sql = """
-				SELECT title, path, length, lastPos, season, episode
+				SELECT *
 				FROM playables
 				WHERE title = ? AND season = ?
 				ORDER BY episode ASC
@@ -238,7 +238,7 @@ public class SQLitePlayableLoader implements PlayableLoader {
 				} else {
 			// Both specified
 			sql = """
-				SELECT title, path, length, lastPos, season, episode
+				SELECT *
 				FROM playables
 				WHERE title = ? AND season = ? AND episode = ?
 				""";
@@ -259,13 +259,7 @@ public class SQLitePlayableLoader implements PlayableLoader {
 
 			try (ResultSet rs = pstmt.executeQuery()) {
 				if (rs.next()) {
-					Playable playable = new Playable();
-					playable.title = rs.getString("title");
-					playable.path = rs.getString("path");
-					playable.length = rs.getDouble("length");
-					playable.lastPos = rs.getDouble("lastPos");
-					playable.season = rs.getInt("season");
-					playable.episode = rs.getInt("episode");
+					Playable playable = map(rs);
 					return playable;
 				}
 			}
@@ -282,7 +276,7 @@ public class SQLitePlayableLoader implements PlayableLoader {
 	@Override
 	public Playable getLatestPlayable(String title) {
 		String sql = """
-			SELECT title, path, length, lastPos, season, episode
+			SELECT *
 			FROM playables
 			WHERE title = ?
 			ORDER BY season, episode
@@ -295,21 +289,14 @@ public class SQLitePlayableLoader implements PlayableLoader {
 			
 				try (ResultSet rs = pstmt.executeQuery()) {
 					while (rs.next()) {
-						Playable playable = new Playable();
-						playable.title = rs.getString("title");
-						playable.path = rs.getString("path");
-						playable.length = rs.getDouble("length");
-						playable.lastPos = rs.getDouble("lastPos");
-						playable.season = rs.getInt("season");
-						playable.episode = rs.getInt("episode");
-
-						// Check if lastPos close to length (e.g. > 90% watched)
-						if (playable.length > 0 && playable.lastPos / playable.length > 0.9) {
-							continue;
-						}
-						else{
-							return playable;
-						}
+					Playable playable = map(rs);
+					// Check if lastPos close to length (e.g. > 90% watched)
+					if (playable.length > 0 && playable.lastPos / playable.length > 0.9) {
+						continue;
+					}
+					else{
+						return playable;
+					}
 					}
 				}
 			} catch (SQLException e) {
@@ -318,6 +305,47 @@ public class SQLitePlayableLoader implements PlayableLoader {
 
 		return null;
 	}
+
+	private Playable map(ResultSet rs) {
+		Playable p = new Playable();
+		try{
+		p.title = rs.getString("title");
+		p.path = rs.getString("path");
+		p.length = rs.getDouble("length");
+		p.lastPos = rs.getDouble("lastPos");
+		p.season = rs.getInt("season");
+		p.episode = rs.getInt("episode");
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+
+		try{
+			p.imdbID = rs.getString("imdbID");
+			p.year = rs.getString("year");
+			p.rated = rs.getString("rated");
+			p.released = rs.getString("released");
+			p.runtime = rs.getString("runtime");
+			p.genre = rs.getString("genre");
+			p.director = rs.getString("director");
+			p.writer = rs.getString("writer");
+			p.actors = rs.getString("actors");
+			p.plot = rs.getString("plot");
+			p.language = rs.getString("language");
+			p.country = rs.getString("country");
+			p.awards = rs.getString("awards");
+			p.poster = rs.getString("poster");
+			p.metascore = rs.getString("metascore");
+			p.imdbrating = rs.getString("imdbRating");
+			p.imdbvotes = rs.getString("imdbVotes");
+			p.type = rs.getString("type");
+			p.totalseasons = rs.getString("totalSeasons");
+		}
+		catch(Exception e){
+			e.printStackTrace();
+		}
+		return p;
+	}
+
 	@Override
 	public List<Playable> getAllEpisodes(String title) {
 		List<Playable> list = new ArrayList<>();
@@ -330,13 +358,7 @@ public class SQLitePlayableLoader implements PlayableLoader {
 			ResultSet rs = stmt.executeQuery();
 
 			while (rs.next()) {
-				Playable p = new Playable();
-				p.title = rs.getString("title");
-				p.path = rs.getString("path");
-				p.length = rs.getDouble("length");
-				p.lastPos = rs.getDouble("lastPos");
-				p.season = rs.getInt("season");
-				p.episode = rs.getInt("episode");
+				Playable p = map(rs);
 				list.add(p);
 			}
 		} catch (SQLException e) {
