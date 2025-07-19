@@ -91,7 +91,7 @@ private String extractErrorMessage(String json) {
 	public Playable getInfo(String title) throws IOException{
 		StringBuilder response = request(this.getEndPoint("i="+getIMDB(title)));
 		Gson gson = new Gson();
-		System.out.println(response);
+		System.out.println("Found metadata for: "+title);
 		Playable info = gson.fromJson(response.toString(), Playable.class);
 		return info;
 	}
@@ -103,7 +103,8 @@ private String extractErrorMessage(String json) {
 
 		Gson gson = new Gson();
 
-		System.out.println(response);
+		System.out.println("Found metadata for: "+playable.title);
+
 
 		Playable info = gson.fromJson(response.toString(), Playable.class);
 
