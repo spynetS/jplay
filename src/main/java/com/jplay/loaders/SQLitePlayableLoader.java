@@ -181,7 +181,7 @@ public class SQLitePlayableLoader implements PlayableLoader {
 			ResultSet rs = pstmt.executeQuery();
 
 			if (rs.next() && rs.getString("imdbID") != null) {
-
+				
 				playable.imdbID = rs.getString("imdbID");
 				playable.year = rs.getString("year");
 				playable.rated = rs.getString("rated");
