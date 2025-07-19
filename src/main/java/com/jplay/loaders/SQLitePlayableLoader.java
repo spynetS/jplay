@@ -35,7 +35,6 @@ public class SQLitePlayableLoader implements PlayableLoader {
 		catch(Exception e){}
 
 		try{
-
 			//retrive apikey
 			Properties appProps = new Properties();
 			appProps.load(new FileInputStream("/home/spy/.config/jplay/config.properties"));
@@ -373,6 +372,25 @@ public class SQLitePlayableLoader implements PlayableLoader {
 			e.printStackTrace();
 		}
 		return p;
+	}
+
+	public List<Playable> getAllEntries(){
+		List<Playable> list = new ArrayList<>();
+		String sql = "SELECT * FROM playables ORDER BY season, episode";
+
+		try (Connection conn = DriverManager.getConnection(DB_URL);
+			 PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+			ResultSet rs = stmt.executeQuery();
+
+			while (rs.next()) {
+				Playable p = map(rs);
+				list.add(p);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return list;
 	}
 
 	@Override

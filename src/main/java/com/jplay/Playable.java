@@ -3,6 +3,7 @@ package com.jplay;
 import java.io.IOException;
 import java.io.Serializable;
 import java.nio.file.Path;
+
 import com.google.gson.annotations.SerializedName;
 
 // this can be an episode in a show or a movie
@@ -66,6 +67,7 @@ public class Playable implements Serializable {
 
     @SerializedName("totalSeasons")
     public String totalseasons;
+
 
 	public double length;
 	public double lastPos;
