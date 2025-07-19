@@ -8,8 +8,8 @@ import java.util.List;
 
 import com.jplay.MPV;
 import com.jplay.Playable;
-import com.jplay.PlayableLoader;
-import com.jplay.SQLitePlayableLoader;
+import com.jplay.loaders.PlayableLoader;
+import com.jplay.loaders.SQLitePlayableLoader;
 
 import picocli.CommandLine;
 import picocli.CommandLine.Option;

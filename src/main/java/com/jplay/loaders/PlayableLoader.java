@@ -1,4 +1,4 @@
-package com.jplay;
+package com.jplay.loaders;
 import java.util.List;
 
 import com.jplay.Playable;
