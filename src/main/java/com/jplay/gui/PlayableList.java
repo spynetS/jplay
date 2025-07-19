@@ -19,7 +19,6 @@ public class PlayableList extends JPanel {
 
 		ArrayList<Playable> playables = new ArrayList<>();
 		Main.scanFolder(new File("/home/spy/Movies"),playables);
-		System.out.println(playables);
 		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		ArrayList<String> added = new ArrayList<>();
 		for(Playable p : playables){

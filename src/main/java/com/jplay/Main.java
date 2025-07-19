@@ -47,12 +47,8 @@ public class Main implements Runnable {
     private String title;
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            new JplayGui().setVisible(true);
-            new Main().scanDefault();
-        });
 
-        //CommandLine.run(new Main(), args);
+        CommandLine.run(new Main(), args);
     }
 
     public void scanDefault(){
@@ -211,15 +207,16 @@ public class Main implements Runnable {
         }
     }
 
-    @Command(name = "gui", description = "GUI")
+    @Command(name = "gui", description = "Starts a Graphical User Interface for JPLAY")
     static class GUICommand implements Runnable {
 
         @Override
         public void run() {
-            JplayGui window = new JplayGui();
-            //window.setTitle("Jplay");
-            window.setVisible(true);
+            new Main().scanDefault();
+            SwingUtilities.invokeLater(() -> {
+                    new JplayGui().setVisible(true);
 
+            });
         }
     }
 }
