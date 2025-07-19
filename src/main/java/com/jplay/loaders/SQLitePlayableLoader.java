@@ -172,7 +172,7 @@ public class SQLitePlayableLoader implements PlayableLoader {
 
 	private Playable fillMissingMetadata(Connection conn, Playable playable) {
 		if (playable.imdbID != null && !playable.imdbID.isBlank()) return playable;
-		System.out.println(playable);
+
 		String sql = "SELECT * FROM playables WHERE title = ? AND season = ? AND episode = ? LIMIT 1";
 		try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
 			pstmt.setString(1, playable.title);
@@ -310,16 +310,13 @@ public class SQLitePlayableLoader implements PlayableLoader {
 			ORDER BY season, episode
 			""";
 
-			System.out.println(sql);
 			try (Connection conn = DriverManager.getConnection(DB_URL);
 				 PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
 				pstmt.setString(1, title);
-				System.out.println(pstmt);
-			
+
 				try (ResultSet rs = pstmt.executeQuery()) {
 					while (rs.next()) {
-						System.out.println(rs.getDouble("lastPos"));
 						Playable playable = map(rs);
 
 						// Check if lastPos close to length (e.g. > 90% watched)
