@@ -19,6 +19,10 @@ public class PlayableList extends JPanel {
 	public PlayableList(PlayablePanel playablePanel){
 		this.playablePanel = playablePanel;
 
+
+	}
+
+	public void updateList(){
 		SQLitePlayableLoader loader = new SQLitePlayableLoader();
 		List<Playable> playables = loader.getAllEntries();
 

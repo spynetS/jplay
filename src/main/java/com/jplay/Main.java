@@ -123,11 +123,7 @@ public class Main implements Runnable {
             System.err.println("Invalid folder path: " + folderPath);
             return playables;
         }
-
-        // Supported video extensions (add more if you want)
-        // Recursive helper
         scanFolder(folder, playables);
-
         return playables;
     }
 
@@ -215,7 +211,6 @@ public class Main implements Runnable {
 
         @Override
         public void run() {
-            new Main().scanDefault();
             SwingUtilities.invokeLater(() -> {
                     new JplayGui().setVisible(true);
 
