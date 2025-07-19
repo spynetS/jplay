@@ -49,7 +49,9 @@ public class Main implements Runnable {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             new JplayGui().setVisible(true);
+            new Main().scanDefault();
         });
+
         //CommandLine.run(new Main(), args);
     }
 

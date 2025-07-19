@@ -25,7 +25,7 @@ public class PlayableList extends JPanel {
 		for(Playable p : playables){
 			if(added.contains(p.title)) continue;
 			added.add(p.title);
-			JButton btn = new JButton(p.title);
+			JButton btn = new JButton(p.title + " " + p.season);
 			btn.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {

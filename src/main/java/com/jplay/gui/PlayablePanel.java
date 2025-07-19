@@ -28,8 +28,10 @@ public class PlayablePanel extends JPanel {
 
     private JLabel lastWatchedLabel = new JLabel("Last watched: None");
 
-    public PlayablePanel() {
+	JFrame frame;
 
+    public PlayablePanel(JFrame frame) {
+		this.frame = frame;
 		episodeList.setCellRenderer(new ListCellRenderer<Playable>() {
 				@Override
 				public Component getListCellRendererComponent(

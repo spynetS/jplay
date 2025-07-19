@@ -2,6 +2,8 @@ package com.jplay.gui;
 
 import java.awt.*;
 import javax.swing.*;
+
+import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.FlatLightLaf;
 
 public class JplayGui extends JFrame {
@@ -27,7 +29,7 @@ public class JplayGui extends JFrame {
 
 
         // Main Content Area
-        PlayablePanel centerPanel = new PlayablePanel();
+        PlayablePanel centerPanel = new PlayablePanel(this);
         centerPanel.setBackground(Color.WHITE);
         centerPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         add(centerPanel, BorderLayout.CENTER);
