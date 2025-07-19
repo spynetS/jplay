@@ -3,17 +3,20 @@ package com.jplay.loaders;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 import com.jplay.omdb.OMDB;
 import com.jplay.omdb.SeriesInfo;
+import com.jplay.omdb.OMDB.InvalidApiKeyException;
 import com.jplay.*;
 
 import java.io.File;
+import java.io.FileInputStream;
 
 public class SQLitePlayableLoader implements PlayableLoader {
 	private static final String DB_PATH = System.getProperty("user.home") + "/.config/jplay/jplay.db";
 	private static final String DB_URL = "jdbc:sqlite:" + DB_PATH;
-	private static final OMDB omdb = new OMDB();
+	private OMDB omdb = null;
 
 	public SQLitePlayableLoader() {
 		try {
@@ -30,6 +33,21 @@ public class SQLitePlayableLoader implements PlayableLoader {
 			}
 		}
 		catch(Exception e){}
+
+		try{
+
+			//retrive apikey
+			Properties appProps = new Properties();
+			appProps.load(new FileInputStream("/home/spy/.config/jplay/config.properties"));
+			String apikey = appProps.getProperty("apikey");
+			if (apikey != null) {
+				omdb = new OMDB(apikey);
+			}
+
+
+		}catch(Exception e){
+			e.printStackTrace();
+		}
 
 		createTableIfNotExists();
 	}
@@ -77,20 +95,19 @@ public class SQLitePlayableLoader implements PlayableLoader {
 	@Override
 	public void registerPlayable(Playable playable) {
 		try (Connection conn = DriverManager.getConnection(DB_URL)) {
-			playable = fillMissingMetadata(conn, playable); // fetch info if needed
+			if(omdb != null) playable = fillMissingMetadata(conn, playable); // fetch info if needed
 
 			String sql = """
 				INSERT INTO playables (
-									   title, path, length, lastPos, season, episode,
+									   title, path, length, season, episode,
 									   imdbID, year, rated, released, runtime, genre, director,
 									   writer, actors, plot, language, country, awards, poster,
-									   metascore, imdbRating, imdbVotes, type, totalSeasons
+									   metascore, imdbRating, imdbVotes, type, totalSeasons, lastPos
 									   )
 				VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 				ON CONFLICT(path) DO UPDATE SET
                 title = excluded.title,
                 length = excluded.length,
-                lastPos = excluded.lastPos,
                 season = excluded.season,
                 episode = excluded.episode,
                 imdbID = excluded.imdbID,
@@ -111,15 +128,16 @@ public class SQLitePlayableLoader implements PlayableLoader {
                 imdbRating = excluded.imdbRating,
                 imdbVotes = excluded.imdbVotes,
                 type = excluded.type,
-                totalSeasons = excluded.totalSeasons
-				""";
+                totalSeasons = excluded.totalSeasons%s
+				"""
+				.formatted(playable.lastPos == -1.0 ? "" : ",\n lastPos = excluded.lastPos");
+
 
 				try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
 					int i = 1;
 					pstmt.setString(i++, playable.title);
 					pstmt.setString(i++, playable.path);
 					pstmt.setDouble(i++, playable.length);
-					pstmt.setDouble(i++, playable.lastPos);
 					pstmt.setInt(i++, playable.season);
 					pstmt.setInt(i++, playable.episode);
 
@@ -142,6 +160,7 @@ public class SQLitePlayableLoader implements PlayableLoader {
 					pstmt.setString(i++, playable.imdbvotes);
 					pstmt.setString(i++, playable.type);
 					pstmt.setString(i++, playable.totalseasons);
+					pstmt.setDouble(i++, playable.lastPos);
 
 					pstmt.executeUpdate();
 				}
@@ -153,7 +172,7 @@ public class SQLitePlayableLoader implements PlayableLoader {
 
 	private Playable fillMissingMetadata(Connection conn, Playable playable) {
 		if (playable.imdbID != null && !playable.imdbID.isBlank()) return playable;
-
+		System.out.println(playable);
 		String sql = "SELECT * FROM playables WHERE title = ? AND season = ? AND episode = ? LIMIT 1";
 		try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
 			pstmt.setString(1, playable.title);
@@ -163,6 +182,7 @@ public class SQLitePlayableLoader implements PlayableLoader {
 			ResultSet rs = pstmt.executeQuery();
 
 			if (rs.next() && rs.getString("imdbID") != null) {
+
 				playable.imdbID = rs.getString("imdbID");
 				playable.year = rs.getString("year");
 				playable.rated = rs.getString("rated");
@@ -183,7 +203,15 @@ public class SQLitePlayableLoader implements PlayableLoader {
 				playable.type = rs.getString("type");
 				playable.totalseasons = rs.getString("totalSeasons");
 			} else {
-				omdb.fillInfo(playable);
+				try{
+					omdb.fillInfo(playable);
+				}
+				catch(InvalidApiKeyException e){
+					System.out.println(e.getMessage());
+				}
+
+
+				
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -282,21 +310,25 @@ public class SQLitePlayableLoader implements PlayableLoader {
 			ORDER BY season, episode
 			""";
 
+			System.out.println(sql);
 			try (Connection conn = DriverManager.getConnection(DB_URL);
 				 PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
 				pstmt.setString(1, title);
+				System.out.println(pstmt);
 			
 				try (ResultSet rs = pstmt.executeQuery()) {
 					while (rs.next()) {
-					Playable playable = map(rs);
-					// Check if lastPos close to length (e.g. > 90% watched)
-					if (playable.length > 0 && playable.lastPos / playable.length > 0.9) {
-						continue;
-					}
-					else{
-						return playable;
-					}
+						System.out.println(rs.getDouble("lastPos"));
+						Playable playable = map(rs);
+
+						// Check if lastPos close to length (e.g. > 90% watched)
+						if (playable.length > 0 && playable.lastPos / playable.length > 0.9) {
+							continue;
+						}
+						else{
+							return playable;
+						}
 					}
 				}
 			} catch (SQLException e) {
@@ -309,12 +341,12 @@ public class SQLitePlayableLoader implements PlayableLoader {
 	private Playable map(ResultSet rs) {
 		Playable p = new Playable();
 		try{
-		p.title = rs.getString("title");
-		p.path = rs.getString("path");
-		p.length = rs.getDouble("length");
-		p.lastPos = rs.getDouble("lastPos");
-		p.season = rs.getInt("season");
-		p.episode = rs.getInt("episode");
+			p.title = rs.getString("title");
+			p.path = rs.getString("path");
+			p.length = rs.getDouble("length");
+			p.lastPos = rs.getDouble("lastPos");
+			p.season = rs.getInt("season");
+			p.episode = rs.getInt("episode");
 		}catch(Exception e){
 			e.printStackTrace();
 		}

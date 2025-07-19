@@ -10,28 +10,66 @@ import java.util.Map;
 public class OMDB {
 
 	String endpoint = "https://www.omdbapi.com";
-	String key = "e5f1fd02";
+	String key = "";
+
+	public OMDB(String apikey){
+		this.key = apikey;
+	}
 
 	private String getEndPoint(String search){
 		return endpoint+"/?"+search+"&apikey="+this.key;
 	}
 
-	private StringBuilder request(String endpoint) throws IOException{
-		URL url = new URL(endpoint);
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        conn.setRequestMethod("GET");
+	public StringBuilder request(String endpoint) throws IOException {
+    HttpURLConnection conn = (HttpURLConnection) new URL(endpoint).openConnection();
+    conn.setRequestMethod("GET");
+    conn.connect();
 
-        BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+    int status = conn.getResponseCode();
+    InputStream stream;
+
+    // Choose stream based on success or failure
+    if (status >= 200 && status < 300) {
+        stream = conn.getInputStream();
+    } else {
+        stream = conn.getErrorStream();
+    }
+
+    // Read the response
+    StringBuilder response = new StringBuilder();
+    try (BufferedReader reader = new BufferedReader(new InputStreamReader(stream))) {
         String line;
-        StringBuilder response = new StringBuilder();
-
-        while ((line = in.readLine()) != null) {
+        while ((line = reader.readLine()) != null) {
             response.append(line);
         }
-        in.close();
+    }
 
-		return response;
-	}
+    // Handle API-level error (e.g. invalid API key)
+    if (status == 401 || response.toString().contains("Invalid API key")) {
+        throw new InvalidApiKeyException("Invalid or missing API key");
+    }
+
+    // You can also throw for other known OMDb errors:
+    if (response.toString().contains("\"Response\":\"False\"")) {
+        // Optional: parse the exact error message
+        String errorMsg = extractErrorMessage(response.toString());
+        throw new IOException("OMDb API error: " + errorMsg);
+    }
+
+    return response;
+}
+
+// Optional helper to extract "Error" field from OMDb JSON
+private String extractErrorMessage(String json) {
+    int index = json.indexOf("\"Error\":\"");
+    if (index != -1) {
+        int start = index + 9;
+        int end = json.indexOf("\"", start);
+        return json.substring(start, end);
+    }
+    return "Unknown error";
+}
+
 
 
 	public String getIMDB(String title) throws IOException{
@@ -57,9 +95,12 @@ public class OMDB {
 		Playable info = gson.fromJson(response.toString(), Playable.class);
 		return info;
 	}
-	public void fillInfo(Playable playable) throws IOException {
+
+	public void fillInfo(Playable playable) throws Exception {
 		String imdbQuery = "i=" + getIMDB(playable.title);
 		StringBuilder response = request(this.getEndPoint(imdbQuery));
+
+
 		Gson gson = new Gson();
 
 		System.out.println(response);
@@ -88,5 +129,9 @@ public class OMDB {
 			playable.totalseasons = info.totalseasons;
 	}
 
-
+	public class InvalidApiKeyException extends IOException {
+		public InvalidApiKeyException(String message) {
+			super(message);
+		}
+	}
 }
