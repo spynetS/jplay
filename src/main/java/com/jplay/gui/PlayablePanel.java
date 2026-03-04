@@ -64,7 +64,10 @@ public class PlayablePanel extends JPanel {
 					JLabel label = new JLabel();
 
 					// Customize the display text
-					label.setText(value.episode + "(Last at " + value.lastPos + ")");
+					if (value.lastPos > 0)
+						label.setText(value.episode + "(" + (int)(value.lastPos/value.length*100) + "%)");
+					else
+						label.setText(value.episode+"");
 
 					// Optional styling
 					label.setOpaque(true);
@@ -132,6 +135,7 @@ public class PlayablePanel extends JPanel {
 					lastWatchedLabel.setText("Last watched: " + selected.episode + " at " + selected.lastPos);
 					selected.play();
 					loader.registerPlayable(selected);
+					updatePlayable(selected);
 				}
 
 			});
@@ -142,6 +146,7 @@ public class PlayablePanel extends JPanel {
 					Playable p = loader.getPlayable(selectedPlayable.title,-1,-1);
 					p.play();
 					loader.registerPlayable(p);
+					updatePlayable(p);
 				}
 			});
     }
@@ -163,17 +168,16 @@ public class PlayablePanel extends JPanel {
 		selectedPlayable = currentPlayable;
 
 
+		plot.setText(currentPlayable.plot);
+		setImage(currentPlayable.poster);
 
-            plot.setText(currentPlayable.plot);
-            setImage(currentPlayable.poster);
-
-            // Clear and add new Playables (replace with real data)
-            episodeListModel.clear();
-            for (Playable episode : loader.getAllEpisodes(currentPlayable.title)) {
-                episodeListModel.addElement(episode);
-            }
-            episodeList.setSelectedIndex(0);
-            lastWatchedLabel.setText("Last watched: None");
+		// Clear and add new Playables (replace with real data)
+		episodeListModel.clear();
+		for (Playable episode : loader.getAllEpisodes(currentPlayable.title)) {
+			episodeListModel.addElement(episode);
+		}
+		episodeList.setSelectedIndex(0);
+		lastWatchedLabel.setText("Last watched: None");
 
     }
 }

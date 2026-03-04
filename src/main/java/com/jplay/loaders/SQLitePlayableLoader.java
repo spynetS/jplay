@@ -132,37 +132,37 @@ public class SQLitePlayableLoader implements PlayableLoader {
 				.formatted(playable.lastPos == -1.0 ? "" : ",\n lastPos = excluded.lastPos");
 
 
-				try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-					int i = 1;
-					pstmt.setString(i++, playable.title);
-					pstmt.setString(i++, playable.path);
-					pstmt.setDouble(i++, playable.length);
-					pstmt.setInt(i++, playable.season);
-					pstmt.setInt(i++, playable.episode);
+			try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+				int i = 1;
+				pstmt.setString(i++, playable.title);
+				pstmt.setString(i++, playable.path);
+				pstmt.setDouble(i++, playable.length);
+				pstmt.setInt(i++, playable.season);
+				pstmt.setInt(i++, playable.episode);
 
-					pstmt.setString(i++, playable.imdbID);
-					pstmt.setString(i++, playable.year);
-					pstmt.setString(i++, playable.rated);
-					pstmt.setString(i++, playable.released);
-					pstmt.setString(i++, playable.runtime);
-					pstmt.setString(i++, playable.genre);
-					pstmt.setString(i++, playable.director);
-					pstmt.setString(i++, playable.writer);
-					pstmt.setString(i++, playable.actors);
-					pstmt.setString(i++, playable.plot);
-					pstmt.setString(i++, playable.language);
-					pstmt.setString(i++, playable.country);
-					pstmt.setString(i++, playable.awards);
-					pstmt.setString(i++, playable.poster);
-					pstmt.setString(i++, playable.metascore);
-					pstmt.setString(i++, playable.imdbrating);
-					pstmt.setString(i++, playable.imdbvotes);
-					pstmt.setString(i++, playable.type);
-					pstmt.setString(i++, playable.totalseasons);
-					pstmt.setDouble(i++, playable.lastPos);
+				pstmt.setString(i++, playable.imdbID);
+				pstmt.setString(i++, playable.year);
+				pstmt.setString(i++, playable.rated);
+				pstmt.setString(i++, playable.released);
+				pstmt.setString(i++, playable.runtime);
+				pstmt.setString(i++, playable.genre);
+				pstmt.setString(i++, playable.director);
+				pstmt.setString(i++, playable.writer);
+				pstmt.setString(i++, playable.actors);
+				pstmt.setString(i++, playable.plot);
+				pstmt.setString(i++, playable.language);
+				pstmt.setString(i++, playable.country);
+				pstmt.setString(i++, playable.awards);
+				pstmt.setString(i++, playable.poster);
+				pstmt.setString(i++, playable.metascore);
+				pstmt.setString(i++, playable.imdbrating);
+				pstmt.setString(i++, playable.imdbvotes);
+				pstmt.setString(i++, playable.type);
+				pstmt.setString(i++, playable.totalseasons);
+				pstmt.setDouble(i++, playable.lastPos);
 
-					pstmt.executeUpdate();
-				}
+				pstmt.executeUpdate();
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -208,12 +208,9 @@ public class SQLitePlayableLoader implements PlayableLoader {
 				catch(InvalidApiKeyException e){
 					System.out.println(e.getMessage());
 				}
-
-
-				
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			System.out.println(e.getMessage());
 		}
 		return playable;
 	}
@@ -301,7 +298,8 @@ public class SQLitePlayableLoader implements PlayableLoader {
 	// Example getLatestPlayable implementation:
 	// Returns last watched episode or next episode if last is almost done (lastPos near length)
 	@Override
-	public Playable getLatestPlayable(String title) {
+	public Playable getLatestPlayable(String title)
+	{
 		String sql = """
 			SELECT *
 			FROM playables
@@ -314,25 +312,56 @@ public class SQLitePlayableLoader implements PlayableLoader {
 
 				pstmt.setString(1, title);
 
+				List<Playable> episodes = new ArrayList<>();
+
 				try (ResultSet rs = pstmt.executeQuery()) {
 					while (rs.next()) {
-						Playable playable = map(rs);
-
-						// Check if lastPos close to length (e.g. > 90% watched)
-						if (playable.length > 0 && playable.lastPos / playable.length > 0.9) {
-							continue;
-						}
-						else{
-							return playable;
-						}
+						episodes.add(map(rs));
 					}
 				}
+
+				if (episodes.isEmpty()) {
+					return null;
+				}
+
+				int latestWatchedIndex = -1;
+
+				for (int i = 0; i < episodes.size(); i++) {
+					Playable ep = episodes.get(i);
+					if (ep.lastPos > 0) {
+						latestWatchedIndex = i;
+					}
+				}
+
+				if (latestWatchedIndex == -1) {
+					// Nothing watched at all → return first episode
+					return episodes.get(0);
+				}
+
+				Playable latestWatched = episodes.get(latestWatchedIndex);
+				double progress = (double) latestWatched.lastPos / latestWatched.length;
+
+				if (progress > 0.9) {
+					// Try to return the next episode
+					if (latestWatchedIndex + 1 < episodes.size()) {
+						return episodes.get(latestWatchedIndex + 1);
+					} else {
+						// No next episode available
+						return null;
+					}
+				} else {
+					// Continue the partially watched episode
+					return latestWatched;
+				}
+
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
 
 		return null;
+
 	}
+
 
 	private Playable map(ResultSet rs) {
 		Playable p = new Playable();
