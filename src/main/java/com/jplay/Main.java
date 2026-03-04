@@ -25,6 +25,7 @@ import com.jplay.MyVersionProvider;
 @Command(name = "jplay", mixinStandardHelpOptions = true,versionProvider = MyVersionProvider.class,
          description = "Movie/show jplay and manager", subcommands = {
     Main.ListCommand.class,
+    Main.RefreshCommand.class,
     Main.GUICommand.class,
 })
 public class Main implements Runnable {
@@ -34,7 +35,7 @@ public class Main implements Runnable {
     File inputPath;
 
     @Option(names = {"--home"}, description = "The default scan path")
-    File defaultPath = new File(System.getProperty("user.home"), "Movies");
+    static File defaultPath = new File(System.getProperty("user.home"), "Movies");
 
     @Option(names = {"--season", "-s"}, description = "Season number")
     private Integer season = -1;
@@ -158,6 +159,25 @@ public class Main implements Runnable {
         throw new IOException();
     }
 
+		@Command(name = "refresh", description = "refresh all registered playables")
+    static class RefreshCommand implements Runnable {
+				@Override
+				public void run() {
+						SQLitePlayableLoader loader = new SQLitePlayableLoader();
+
+						if(defaultPath != null && defaultPath.isDirectory()){
+								List<Playable> players = getPlayablesInFolder(defaultPath.getAbsolutePath());
+								for(Playable player : players){
+										player.pathExists = 1;
+										// log new found fotage
+										System.out.println("Found: "+player.title);
+										loader.registerPlayable(player);
+								}
+						}
+				}
+		}
+
+
     @Command(name = "list", description = "List all registered playables")
     static class ListCommand implements Runnable {
 
@@ -168,6 +188,10 @@ public class Main implements Runnable {
         @Option(names = "-p", description = "Show path to the video file")
         boolean showPath;
 
+				@Option(names = "--history", description = "Show all recorded series watched")
+        boolean exists;
+
+
         @Override
         public void run() {
             PlayableLoader loader = new SQLitePlayableLoader();
@@ -175,32 +199,35 @@ public class Main implements Runnable {
                 List<Playable> episodes = loader.getAllEpisodes(title);
                 if (episodes.isEmpty()) {
                     System.out.println("No episodes found for: " + title);
-                } else {
+                } else  {
 
                     System.out.println(episodes.get(0).plot);
                     System.out.println("-----------------------");
                     if(!showPath){
-                        episodes.forEach(p -> System.out.printf(
-                                                                "%s - S%02dE%02d seen=%.2f%%%n",
-                                                                p.title, p.season, p.episode, (p.lastPos / p.length * 100)
-                                                                ));
+                        episodes.forEach(p -> {
+																if (p.pathExists == 1){
+																		System.out.printf("%s - S%02dE%02d seen=%.2f%%%n",
+																											p.title, p.season, p.episode, (p.lastPos / p.length * 100));
+																}
+														});
                     }
                     else{
-                        episodes.forEach(p -> System.out.printf(
-                                            "%s - S%02dE%02d [%s] %.2f%\n",
-                                            p.title, p.season, p.episode, p.path,
-                                            (p.lastPos / p.length * 100)
-                                            ));
-
+												episodes.forEach(p -> {
+																if (p.pathExists == 1){
+																		System.out.printf("%s - S%02dE%02d [%s] %.2f%\n",
+																											p.title, p.season, p.episode, p.path,
+																											(p.lastPos / p.length * 100));
+																				}
+														});
                     }
 
                 }
             } else {
-                List<String> allTitles = loader.getAllTitles();
+                List<String> allTitles = loader.getAllTitles(!exists);
                 if (allTitles.isEmpty()) {
                     System.out.println("No titles found.");
                 } else {
-                    allTitles.forEach(System.out::println);
+										allTitles.forEach(System.out::println);
                 }
             }
         }

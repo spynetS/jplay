@@ -101,9 +101,9 @@ public class SQLitePlayableLoader implements PlayableLoader {
 									   title, path, length, season, episode,
 									   imdbID, year, rated, released, runtime, genre, director,
 									   writer, actors, plot, language, country, awards, poster,
-									   metascore, imdbRating, imdbVotes, type, totalSeasons, lastPos
+									   metascore, imdbRating, imdbVotes, type, totalSeasons, lastPos, pathExists
 									   )
-				VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+					VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 				ON CONFLICT(path) DO UPDATE SET
                 title = excluded.title,
                 length = excluded.length,
@@ -127,7 +127,8 @@ public class SQLitePlayableLoader implements PlayableLoader {
                 imdbRating = excluded.imdbRating,
                 imdbVotes = excluded.imdbVotes,
                 type = excluded.type,
-                totalSeasons = excluded.totalSeasons%s
+					      totalSeasons = excluded.totalSeasons%s,
+					      pathExists = excluded.pathExists
 				"""
 				.formatted(playable.lastPos == -1.0 ? "" : ",\n lastPos = excluded.lastPos");
 
@@ -160,6 +161,7 @@ public class SQLitePlayableLoader implements PlayableLoader {
 				pstmt.setString(i++, playable.type);
 				pstmt.setString(i++, playable.totalseasons);
 				pstmt.setDouble(i++, playable.lastPos);
+				pstmt.setInt(i++, playable.pathExists);
 
 				pstmt.executeUpdate();
 			}
@@ -372,6 +374,7 @@ public class SQLitePlayableLoader implements PlayableLoader {
 			p.lastPos = rs.getDouble("lastPos");
 			p.season = rs.getInt("season");
 			p.episode = rs.getInt("episode");
+			p.pathExists = rs.getInt("pathExists");
 		}catch(Exception e){
 			e.printStackTrace();
 		}
@@ -444,9 +447,10 @@ public class SQLitePlayableLoader implements PlayableLoader {
 	}
 
 	@Override
-	public List<String> getAllTitles() {
+	public List<String> getAllTitles(boolean exists) {
 		List<String> titles = new ArrayList<>();
-		String sql = "SELECT DISTINCT title FROM playables ORDER BY title";
+
+		String sql = !exists ? "SELECT DISTINCT title FROM playables ORDER BY title" : "SELECT DISTINCT title FROM playables where pathExists==1 ORDER BY title";
 
 		try (Connection conn = DriverManager.getConnection(DB_URL);
 			 PreparedStatement stmt = conn.prepareStatement(sql)) {

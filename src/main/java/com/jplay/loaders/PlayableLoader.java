@@ -17,6 +17,6 @@ public interface PlayableLoader {
 	public Playable getLatestPlayable(String search);
 
 	public List<Playable> getAllEpisodes(String title);
-	public List<String> getAllTitles();
+	public List<String> getAllTitles(boolean exists);
 	public List<Playable> getAllEntries();
 }

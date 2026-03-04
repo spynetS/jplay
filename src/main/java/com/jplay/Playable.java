@@ -68,6 +68,9 @@ public class Playable implements Serializable {
     @SerializedName("totalSeasons")
     public String totalseasons;
 
+    @SerializedName("pathExists")
+    public int pathExists;
+
 
 	public double length;
 	public double lastPos;
@@ -92,6 +95,6 @@ public class Playable implements Serializable {
 	}
 
 	public String toString(){
-		return "{\ntitle: "+title+"\npath: "+path+"\nseason: "+season+"\nepisode: "+episode+"\nlastpos: "+lastPos+"\n}";
+		return "{\ntitle: "+title+"\npath: "+path+"\nseason: "+season+"\nepisode: "+episode+"\nlastpos: "+lastPos+"\npathExists: "+pathExists+"\n}";
 	}
 }
