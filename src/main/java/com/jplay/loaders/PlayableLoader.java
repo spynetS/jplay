@@ -18,5 +18,7 @@ public interface PlayableLoader {
 
 	public List<Playable> getAllEpisodes(String title);
 	public List<String> getAllTitles(boolean exists);
-	public List<Playable> getAllEntries();
+	public List<Playable> getAllEntries(boolean exists);
+	public Playable getPlayable(int index, int season, int episode);
+		
 }

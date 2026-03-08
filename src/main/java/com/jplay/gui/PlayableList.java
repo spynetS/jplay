@@ -24,13 +24,13 @@ public class PlayableList extends JPanel {
 
 	public void updateList(){
 		SQLitePlayableLoader loader = new SQLitePlayableLoader();
-		List<Playable> playables = loader.getAllEntries();
+		List<Playable> playables = loader.getAllEntries(true);
 
 
 		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		ArrayList<String> added = new ArrayList<>();
 		for(Playable p : playables){
-			if(added.contains(p.title)) continue;
+			if(added.contains(p.title) || p.pathExists != 1) continue;
 			added.add(p.title);
 			JButton btn = new JButton(p.title + " " + p.season);
 			btn.addActionListener(new ActionListener() {

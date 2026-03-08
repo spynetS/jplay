@@ -52,7 +52,7 @@ public class Main implements Runnable {
         CommandLine.run(new Main(), args);
     }
 
-    public void scanDefault(){
+    public static void scanDefault(){
         SQLitePlayableLoader loader = new SQLitePlayableLoader();
         if(defaultPath != null && defaultPath.isDirectory()){
             List<Playable> players = getPlayablesInFolder(defaultPath.getAbsolutePath());
@@ -68,6 +68,8 @@ public class Main implements Runnable {
     public void run() {
         SQLitePlayableLoader loader = new SQLitePlayableLoader();
         scanDefault();
+				try{
+
         if (inputPath != null && inputPath.exists()) {
             if(inputPath.isDirectory()){
                 System.out.println("Playing folder");
@@ -102,10 +104,26 @@ public class Main implements Runnable {
 
         }
         else if (inputPath != null) {
-            System.out.println("Playing title");
-            Playable p = loader.getPlayable(inputPath.getName(),season,episode);
-            p.play();
-            loader.registerPlayable(p);
+            System.out.println("Playing title " + inputPath);
+						try {
+								int d = Integer.parseInt(inputPath.toString());
+								if (d <= 0) {
+										throw new Exception("Indexes begin with 1, run list to see list of titles");
+								}
+								Playable p = loader.getPlayable(d-1,season,episode);
+								if (p == null) {
+										throw new Exception("Episode \""+ (episode) +"\" does not exists");
+								}
+
+								p.play();
+								loader.registerPlayable(p);
+
+						} catch (NumberFormatException nfe) {
+								Playable p = loader.getPlayable(inputPath.getName(),season,episode);
+								p.play();
+								loader.registerPlayable(p);
+						}
+
 
         }
         else if (title != null){
@@ -114,7 +132,9 @@ public class Main implements Runnable {
             p.play();
             loader.registerPlayable(p);
         }
-
+				} catch(Exception e) {
+						System.out.println(e.getMessage());
+				}
     }
     public static List<Playable> getPlayablesInFolder(String folderPath) {
         List<Playable> playables = new ArrayList<>();
@@ -180,8 +200,6 @@ public class Main implements Runnable {
 
     @Command(name = "list", description = "List all registered playables")
     static class ListCommand implements Runnable {
-
-
         @Option(names = {"--title"}, description = "Only list episodes for this title")
         String title;
 
@@ -195,6 +213,8 @@ public class Main implements Runnable {
         @Override
         public void run() {
             PlayableLoader loader = new SQLitePlayableLoader();
+						scanDefault();
+						// if a title is set list the episodes
             if (title != null) {
                 List<Playable> episodes = loader.getAllEpisodes(title);
                 if (episodes.isEmpty()) {
@@ -222,12 +242,15 @@ public class Main implements Runnable {
                     }
 
                 }
-            } else {
+            }
+						else {
                 List<String> allTitles = loader.getAllTitles(!exists);
                 if (allTitles.isEmpty()) {
                     System.out.println("No titles found.");
                 } else {
-										allTitles.forEach(System.out::println);
+										for(int i = 0; i < allTitles.size();i ++){
+												System.out.println("("+ (i+1) +") " + allTitles.get(i));
+										}
                 }
             }
         }
