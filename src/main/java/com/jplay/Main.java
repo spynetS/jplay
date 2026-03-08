@@ -43,7 +43,7 @@ public class Main implements Runnable {
     private Integer season = -1;
 
 		@Option(names={"--player"}, defaultValue="mpv",
-						description = "Player to use: mpv",
+						description = "Player to use: mpv, vlc",
 						converter = PlayerConverter.class)
     public static Player player;
 
