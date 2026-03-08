@@ -69,69 +69,59 @@ public class Main implements Runnable {
         SQLitePlayableLoader loader = new SQLitePlayableLoader();
         scanDefault();
 				try{
-
-        if (inputPath != null && inputPath.exists()) {
-            if(inputPath.isDirectory()){
-                System.out.println("Playing folder");
-                // registar all episodes in the foldern
-                List<Playable> players = getPlayablesInFolder(inputPath.getAbsolutePath());
-                for(Playable player : players){
-                    loader.registerPlayable(player);
-                }
-                // play the lastest of the title
-                Playable p = loader.getPlayable(title != null ? title : players.getFirst().title,season,episode);
-                p.play();
-                // register again to save the new lastPos
-                loader.registerPlayable(p);
-            }
-            else if(inputPath.isFile()){
-                try {
-                    System.out.println("Playing file");
-                    // load the file
-                    Playable p = loadPlayable(inputPath);
-                    loader.registerPlayable(p);
-                    // get it from the database (this is if it allready exists so we get the right lastpos)
-                    p = loader.getPlayable(p.title,p.season,p.episode);
-                    p.play();
-                    // save the new lastpos
-                    loader.registerPlayable(p);
-
-                } catch (Exception e) {
-                    // TODO: handle exception
-                }
-
-            }
-
-        }
-        else if (inputPath != null) {
-            System.out.println("Playing title " + inputPath);
-						try {
-								int d = Integer.parseInt(inputPath.toString());
-								if (d <= 0) {
-										throw new Exception("Indexes begin with 1, run list to see list of titles");
+						Playable playable = null;
+						
+						if (inputPath != null && inputPath.exists()) {
+								if(inputPath.isDirectory()){
+										System.out.println("Playing folder");
+										// registar all episodes in the foldern
+										List<Playable> players = getPlayablesInFolder(inputPath.getAbsolutePath());
+										for(Playable player : players){
+												loader.registerPlayable(player);
+										}
+										// play the lastest of the title
+										playable = loader.getPlayable(title != null ? title : players.getFirst().title,season,episode);
 								}
-								Playable p = loader.getPlayable(d-1,season,episode);
-								if (p == null) {
-										throw new Exception("Episode \""+ (episode) +"\" does not exists");
+								else if(inputPath.isFile()){
+										try {
+												System.out.println("Playing file");
+												// load the file
+												playable = loadPlayable(inputPath);
+												loader.registerPlayable(playable);
+												// get it from the database (this is if it allready exists so we get the right lastpos)
+												playable = loader.getPlayable(playable.title,playable.season,playable.episode);
+										} catch (Exception e) {
+												// TODO: handle exception
+										}
 								}
 
-								p.play();
-								loader.registerPlayable(p);
+						}
+						else if (inputPath != null) {
+								System.out.println("Playing title " + inputPath);
+								try {
+										int d = Integer.parseInt(inputPath.toString());
+										if (d <= 0) {
+												throw new Exception("Indexes begin with 1, run list to see list of titles");
+										}
+										playable = loader.getPlayable(d-1,season,episode);
+										if (playable == null) {
+												throw new Exception("Episode \""+ (episode) +"\" does not exists");
+										}
 
-						} catch (NumberFormatException nfe) {
-								Playable p = loader.getPlayable(inputPath.getName(),season,episode);
-								p.play();
-								loader.registerPlayable(p);
+								} catch (NumberFormatException nfe) {
+										playable = loader.getPlayable(inputPath.getName(),season,episode);
+								}
+
+
+						}
+						else if (title != null){
+								System.out.println("Playing title (--title)");
+								playable = loader.getPlayable(title,season,episode);
 						}
 
-
-        }
-        else if (title != null){
-            System.out.println("Playing title (--title)");
-            Playable p = loader.getPlayable(title,season,episode);
-            p.play();
-            loader.registerPlayable(p);
-        }
+						playable.play();
+						loader.registerPlayable(playable);
+						
 				} catch(Exception e) {
 						System.out.println(e.getMessage());
 				}
