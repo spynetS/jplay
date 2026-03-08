@@ -12,10 +12,11 @@ import java.nio.file.*;
 import java.util.Arrays;
 import java.util.List;
 
-public class MPV {
+public class MPV implements Player {
 	private static final String MPV_SOCKET = "/tmp/mpvsocket";
 
-	public Process startMPV(String videoPath, double startSeconds) throws IOException {
+	@Override
+	public Process start(String videoPath, double startSeconds) throws IOException {
 		Path socketPath = Paths.get(MPV_SOCKET);
 
 		// Delete old socket if it exists
@@ -75,8 +76,8 @@ public class MPV {
 			return null;
 		}
 	}
-
-	public double waitForMPVExit(Process process) {
+	@Override
+	public double waitForExit(Process process) {
 		double lastPosition = 0;
 
 		while (process.isAlive()) {

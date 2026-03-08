@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Properties;
 
+import com.jplay.MPV;
+import com.jplay.Main;
 import com.jplay.Playable;
 import com.jplay.loaders.PlayableLoader;
 import com.jplay.loaders.SQLitePlayableLoader;
@@ -133,7 +135,7 @@ public class PlayablePanel extends JPanel {
 				Playable selected = episodeList.getSelectedValue();
 				if (selected != null) {
 					lastWatchedLabel.setText("Last watched: " + selected.episode + " at " + selected.lastPos);
-					selected.play();
+					selected.play(Main.player);
 					loader.registerPlayable(selected);
 					updatePlayable(selected);
 				}
@@ -144,7 +146,7 @@ public class PlayablePanel extends JPanel {
 				if (selected != null) {
 					lastWatchedLabel.setText("Last watched: " + selected.episode + " at " + selected.lastPos);
 					Playable p = loader.getPlayable(selectedPlayable.title,-1,-1);
-					p.play();
+					p.play(Main.player);
 					loader.registerPlayable(p);
 					updatePlayable(p);
 				}
