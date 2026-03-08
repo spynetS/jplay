@@ -6,6 +6,9 @@ import java.nio.file.Path;
 
 import com.google.gson.annotations.SerializedName;
 
+import com.jplay.player.Player;
+
+
 // this can be an episode in a show or a movie
 public class Playable implements Serializable {
 	@SerializedName("Title")

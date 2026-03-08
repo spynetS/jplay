@@ -1,4 +1,4 @@
-package com.jplay;
+package com.jplay.player;
 
 import java.io.IOException;
 

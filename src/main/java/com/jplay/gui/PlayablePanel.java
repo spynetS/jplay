@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Properties;
 
-import com.jplay.MPV;
+import com.jplay.player.MPV;
 import com.jplay.Main;
 import com.jplay.Playable;
 import com.jplay.loaders.PlayableLoader;

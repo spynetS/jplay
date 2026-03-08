@@ -10,7 +10,7 @@ import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
-import com.jplay.MPV;
+import com.jplay.player.MPV;
 import com.jplay.Playable;
 import com.jplay.converters.PlayerConverter;
 import com.jplay.loaders.PlayableLoader;
@@ -20,6 +20,7 @@ import picocli.CommandLine;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Parameters;
+import com.jplay.player.Player;
 
 import com.jplay.MyVersionProvider;
 

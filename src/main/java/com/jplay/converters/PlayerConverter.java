@@ -1,8 +1,8 @@
 package com.jplay.converters;
 
 
-import com.jplay.MPV;
-import com.jplay.Player;
+import com.jplay.player.MPV;
+import com.jplay.player.Player;
 
 import picocli.CommandLine;
 
