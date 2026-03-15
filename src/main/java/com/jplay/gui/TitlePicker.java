@@ -4,7 +4,6 @@ import java.util.List;
 import java.awt.FlowLayout;
 import java.util.ArrayList;
 
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import com.jplay.Playable;

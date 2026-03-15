@@ -1,14 +1,13 @@
 package com.jplay.gui;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+
 import java.awt.*;
 import java.io.*;
-import java.security.Certificate;
 import java.util.List;
 
 import com.formdev.flatlaf.FlatDarculaLaf;
-import com.formdev.flatlaf.FlatDarkLaf;
-import com.formdev.flatlaf.FlatLightLaf;
 import com.jplay.loaders.SQLitePlayableLoader;
 import com.jplay.Playable;
 import com.jplay.Main;
@@ -24,11 +23,13 @@ public class JplayGui extends JFrame {
 		
     private SQLitePlayableLoader loader = new SQLitePlayableLoader();
     private File defaultPath = new File("/home/spy/Movies");
-    private PlayableList leftPanel;
 
     public JplayGui() {
         try {
             UIManager.setLookAndFeel(new FlatDarculaLaf());
+						UIManager.put("Button.hoverBackground", new Color(70, 70, 90));
+						UIManager.put("Button.hoverForeground", Color.WHITE);
+						UIManager.put("Button.arc", 20); // rounded corners
         } catch (Exception ex) {
             System.err.println("Failed to initialize LaF");
         }
@@ -48,6 +49,8 @@ public class JplayGui extends JFrame {
 						});
 
 
+				centerPanel.setBorder(new EmptyBorder(20, 20, 20, 20));
+				detailsPanel.setBorder(new EmptyBorder(20, 20, 20, 20));
 				
 				mainPanel.add(new JScrollPane(centerPanel),"grid");
         mainPanel.add(detailsPanel,"details");

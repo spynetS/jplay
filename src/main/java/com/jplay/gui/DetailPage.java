@@ -2,16 +2,13 @@ package com.jplay.gui;
 
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.event.ActionListener;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
 
 import com.jplay.Main;
 import com.jplay.Playable;
@@ -26,7 +23,7 @@ public class DetailPage extends JPanel {
 		JLabel title = new JLabel();
 		JLabel description = new JLabel();
 
-		EpisodePanel episode_panel;
+		EpisodePanel episode_panel = new EpisodePanel();
 		
 		public DetailPage (CardLayout cardLayout) {
 				setLayout(new BorderLayout());
@@ -34,6 +31,9 @@ public class DetailPage extends JPanel {
 				JButton back = new JButton("Back");
         back.addActionListener(e -> cardLayout.show(this.getParent(),"grid"));
 
+				mediaDetails.setBorder(new EmptyBorder(10, 10, 10, 10));
+				episode_panel.setBorder(new EmptyBorder(10, 10, 10, 10));
+				
 				mediaDetails.setLayout(new BorderLayout());
 				mediaDetails.add(poster,BorderLayout.WEST);
 
@@ -47,10 +47,8 @@ public class DetailPage extends JPanel {
 				mediaDetails.add(back,BorderLayout.EAST);
 
 				
-				episode_panel = new EpisodePanel();
-				JPanel play_panel = new JPanel();
-				
 
+				JPanel play_panel = new JPanel();
 				JButton play = new JButton("Play latest");
 				play.addActionListener(e -> {
 								SQLitePlayableLoader loader = new SQLitePlayableLoader();

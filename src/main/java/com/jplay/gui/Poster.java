@@ -1,12 +1,10 @@
 package com.jplay.gui;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.net.MalformedURLException;
 import java.net.URL;
 
