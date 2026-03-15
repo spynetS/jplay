@@ -18,8 +18,8 @@ import com.jplay.omdb.OMDB;
 
 public class PlayablePanel extends JPanel {
 
-	PlayableLoader loader = new SQLitePlayableLoader();
-	Playable selectedPlayable;
+		PlayableLoader loader = new SQLitePlayableLoader();
+		Playable selectedPlayable;
     private OMDB omdb = null;
 
     private JLabel title = new JLabel();
@@ -29,64 +29,62 @@ public class PlayablePanel extends JPanel {
     private DefaultListModel<Playable> episodeListModel = new DefaultListModel<>();
     private JList<Playable> episodeList = new JList<>(episodeListModel);
     private JButton playButton = new JButton("Play Episode");
-	private JButton playLatest = new JButton("Play Latest");
+		private JButton playLatest = new JButton("Play Latest");
 
     private JLabel lastWatchedLabel = new JLabel("Last watched: None");
 
-	JFrame frame;
+		JFrame frame;
 
     public PlayablePanel(JFrame frame) {
-		this.frame = frame;
+				this.frame = frame;
 
-        // init omdb
-        try{
-			//retrive apikey
-			Properties appProps = new Properties();
-			appProps.load(new FileInputStream("/home/spy/.config/jplay/config.properties"));
-			String apikey = appProps.getProperty("apikey");
-			if (apikey != null) {
-				omdb = new OMDB(apikey);
-			}
-
-
-		}catch(Exception e){
-			e.printStackTrace();
-		}
-
-
-		episodeList.setCellRenderer(new ListCellRenderer<Playable>() {
-				@Override
-				public Component getListCellRendererComponent(
-															  JList<? extends Playable> list,
-															  Playable value,
-															  int index,
-															  boolean isSelected,
-															  boolean cellHasFocus
-															  ) {
-					JLabel label = new JLabel();
-
-					// Customize the display text
-					if (value.lastPos > 0)
-						label.setText(value.episode + "(" + (int)(value.lastPos/value.length*100) + "%)");
-					else
-						label.setText(value.episode+"");
-
-					// Optional styling
-					label.setOpaque(true);
-					label.setFont(new Font("SansSerif", Font.PLAIN, 14));
-					label.setBorder(BorderFactory.createEmptyBorder(4, 8, 4, 8));
-
-					if (isSelected) {
-						label.setBackground(list.getSelectionBackground());
-						label.setForeground(list.getSelectionForeground());
-					} else {
-						label.setBackground(list.getBackground());
-						label.setForeground(list.getForeground());
-					}
-
-					return label;
+				// init omdb
+				try{
+						//retrive apikey
+						Properties appProps = new Properties();
+						appProps.load(new FileInputStream("/home/spy/.config/jplay/config.properties"));
+						String apikey = appProps.getProperty("apikey");
+						if (apikey != null) {
+								omdb = new OMDB(apikey);
+						}
+				}catch(Exception e){
+						e.printStackTrace();
 				}
-			});
+
+
+				episodeList.setCellRenderer(new ListCellRenderer<Playable>() {
+								@Override
+								public Component getListCellRendererComponent(
+																															JList<? extends Playable> list,
+																															Playable value,
+																															int index,
+																															boolean isSelected,
+																															boolean cellHasFocus
+																															) {
+										JLabel label = new JLabel();
+
+										// Customize the display text
+										if (value.lastPos > 0)
+												label.setText(value.episode + "(" + (int)(value.lastPos/value.length*100) + "%)");
+										else
+												label.setText(value.episode+"");
+
+										// Optional styling
+										label.setOpaque(true);
+										label.setFont(new Font("SansSerif", Font.PLAIN, 14));
+										label.setBorder(BorderFactory.createEmptyBorder(4, 8, 4, 8));
+
+										if (isSelected) {
+												label.setBackground(list.getSelectionBackground());
+												label.setForeground(list.getSelectionForeground());
+										} else {
+												label.setBackground(list.getBackground());
+												label.setForeground(list.getForeground());
+										}
+
+										return label;
+								}
+						});
 
 
         setLayout(new BorderLayout(10, 10));
@@ -124,7 +122,7 @@ public class PlayablePanel extends JPanel {
 
         JPanel bottomPanel = new JPanel(new BorderLayout());
         bottomPanel.add(playButton, BorderLayout.EAST);
-		bottomPanel.add(playLatest, BorderLayout.WEST);
+				bottomPanel.add(playLatest, BorderLayout.WEST);
         episodesPanel.add(bottomPanel, BorderLayout.SOUTH);
 
         lastWatchedLabel.setFont(lastWatchedLabel.getFont().deriveFont(Font.ITALIC, 12f));
@@ -132,25 +130,25 @@ public class PlayablePanel extends JPanel {
 
         // Play button behavior
         playButton.addActionListener(e -> {
-				Playable selected = episodeList.getSelectedValue();
-				if (selected != null) {
-					lastWatchedLabel.setText("Last watched: " + selected.episode + " at " + selected.lastPos);
-					selected.play(Main.player);
-					loader.registerPlayable(selected);
-					updatePlayable(selected);
-				}
+								Playable selected = episodeList.getSelectedValue();
+								if (selected != null) {
+										lastWatchedLabel.setText("Last watched: " + selected.episode + " at " + selected.lastPos);
+										selected.play(Main.player);
+										loader.registerPlayable(selected);
+										updatePlayable(selected);
+								}
 
-			});
-		playLatest.addActionListener(e -> {
-				Playable selected = episodeList.getSelectedValue();
-				if (selected != null) {
-					lastWatchedLabel.setText("Last watched: " + selected.episode + " at " + selected.lastPos);
-					Playable p = loader.getPlayable(selectedPlayable.title,-1,-1);
-					p.play(Main.player);
-					loader.registerPlayable(p);
-					updatePlayable(p);
-				}
-			});
+						});
+				playLatest.addActionListener(e -> {
+								Playable selected = episodeList.getSelectedValue();
+								if (selected != null) {
+										lastWatchedLabel.setText("Last watched: " + selected.episode + " at " + selected.lastPos);
+										Playable p = loader.getPlayable(selectedPlayable.title,-1,-1);
+										p.play(Main.player);
+										loader.registerPlayable(p);
+										updatePlayable(p);
+								}
+						});
     }
 
     private void setImage(String url) {
@@ -167,19 +165,19 @@ public class PlayablePanel extends JPanel {
 
     public void updatePlayable(Playable currentPlayable) {
         title.setText(currentPlayable.title + " " + currentPlayable.season);
-		selectedPlayable = currentPlayable;
+				selectedPlayable = currentPlayable;
 
 
-		plot.setText(currentPlayable.plot);
-		setImage(currentPlayable.poster);
+				plot.setText(currentPlayable.plot);
+				setImage(currentPlayable.poster);
 
-		// Clear and add new Playables (replace with real data)
-		episodeListModel.clear();
-		for (Playable episode : loader.getAllEpisodes(currentPlayable.title)) {
-			episodeListModel.addElement(episode);
-		}
-		episodeList.setSelectedIndex(0);
-		lastWatchedLabel.setText("Last watched: None");
+				// Clear and add new Playables (replace with real data)
+				episodeListModel.clear();
+				for (Playable episode : loader.getAllEpisodes(currentPlayable.title)) {
+						episodeListModel.addElement(episode);
+				}
+				episodeList.setSelectedIndex(0);
+				lastWatchedLabel.setText("Last watched: None");
 
     }
 }

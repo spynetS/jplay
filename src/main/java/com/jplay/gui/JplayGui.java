@@ -3,7 +3,11 @@ package com.jplay.gui;
 import javax.swing.*;
 import java.awt.*;
 import java.io.*;
+import java.security.Certificate;
 import java.util.List;
+
+import com.formdev.flatlaf.FlatDarculaLaf;
+import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.FlatLightLaf;
 import com.jplay.loaders.SQLitePlayableLoader;
 import com.jplay.Playable;
@@ -12,15 +16,19 @@ import com.jplay.Main;
 public class JplayGui extends JFrame {
 
     private JTextArea consoleArea = new JTextArea();
-    private JScrollPane consoleScroll;
-    private PlayablePanel centerPanel;
+		//    private PlayablePanel centerPanel;
+		private TitlePicker centerPanel;
+
+		private CardLayout cardLayout = new CardLayout();
+		private JPanel mainPanel = new JPanel(cardLayout);
+		
     private SQLitePlayableLoader loader = new SQLitePlayableLoader();
     private File defaultPath = new File("/home/spy/Movies");
     private PlayableList leftPanel;
 
     public JplayGui() {
         try {
-            UIManager.setLookAndFeel(new FlatLightLaf());
+            UIManager.setLookAndFeel(new FlatDarculaLaf());
         } catch (Exception ex) {
             System.err.println("Failed to initialize LaF");
         }
@@ -31,38 +39,24 @@ public class JplayGui extends JFrame {
         setLocationRelativeTo(null);
         setLayout(new BorderLayout(10, 10));
 
-        // Header
-        JLabel headerLabel = new JLabel("🎵 JPlay Media Browser");
-        headerLabel.setFont(new Font("SansSerif", Font.BOLD, 22));
-        headerLabel.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 10));
-        add(headerLabel, BorderLayout.NORTH);
+				DetailPage detailsPanel = new DetailPage(cardLayout);
 
-        // Center Panel
-        centerPanel = new PlayablePanel(this);
-        //JScrollPane centerScroll = new JScrollPane(centerPanel);
-				//        centerScroll.setBorder(null);
-        add(centerPanel, BorderLayout.CENTER);
+				centerPanel = new TitlePicker();
+				centerPanel.setTitlePickerListener((Playable playable) -> {
+								detailsPanel.update(playable);
+								cardLayout.show(mainPanel, "details");
+						});
 
-        // Sidebar
-        leftPanel = new PlayableList(centerPanel);
-        leftPanel.setPreferredSize(new Dimension(220, 0));
-        leftPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 1, Color.GRAY));
-        add(leftPanel, BorderLayout.WEST);
 
-        // Console Panel
-        consoleArea.setEditable(false);
-        consoleArea.setFont(new Font("Monospaced", Font.PLAIN, 12));
-        consoleScroll = new JScrollPane(consoleArea);
-        consoleScroll.setPreferredSize(new Dimension(1000, 150));
-        add(consoleScroll, BorderLayout.SOUTH);
+				
+				mainPanel.add(new JScrollPane(centerPanel),"grid");
+        mainPanel.add(detailsPanel,"details");
 
-        // Redirect stdout to console
-        redirectSystemOut();
+				add(mainPanel);
 
         // Load files and run registerPlayable
         loadPlayables();
-
-        getRootPane().setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        //getRootPane().setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
     }
 
     private void redirectSystemOut() {
@@ -84,7 +78,7 @@ public class JplayGui extends JFrame {
                     loader.registerPlayable(player);
                 }
                 System.out.println("✔ Done loading " + players.size() + " playables.");
-                leftPanel.updateList();
+                centerPanel.update();
                 validate();
                 repaint();
 
