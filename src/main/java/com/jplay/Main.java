@@ -169,6 +169,7 @@ public class Main implements Runnable {
                 p.lastPos = -1;
                 p.season = g.getSeason();     // Default for movies, change if you want
                 p.episode = g.getEpisode();
+                p.pathExists = 1;
                 return p;
             }
         }

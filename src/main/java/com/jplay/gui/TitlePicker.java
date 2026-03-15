@@ -21,6 +21,7 @@ public class TitlePicker extends JPanel {
 		}
 		
 		public void update(){
+				removeAll();
 				SQLitePlayableLoader loader = new SQLitePlayableLoader();
 				List<Playable> playables = loader.getAllEntries(true);
 

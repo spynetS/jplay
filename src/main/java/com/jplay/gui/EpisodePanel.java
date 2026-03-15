@@ -63,6 +63,8 @@ public class EpisodePanel extends JPanel {
 										episode.play(Main.player);
 										loader.registerPlayable(episode);
 										this.setPlayable(playable);
+										validate();
+										repaint();
 								});
 						
             row.add(number);

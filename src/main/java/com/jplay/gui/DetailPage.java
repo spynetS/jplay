@@ -55,6 +55,8 @@ public class DetailPage extends JPanel {
 								Playable p = loader.getPlayable(playable.title,-1,-1);
 								p.play(Main.player);
 								loader.registerPlayable(p);
+								validate();
+								repaint();
 						});
 
 				play_panel.add(play);

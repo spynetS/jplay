@@ -56,6 +56,15 @@ public class JplayGui extends JFrame {
         mainPanel.add(detailsPanel,"details");
 
 				add(mainPanel);
+				Menu menu = new Menu();
+				menu.setMenuListener(() -> {
+								System.out.println("asd");
+								centerPanel.update();
+								validate();
+								repaint();
+
+						});
+				setJMenuBar(menu);
 
         // Load files and run registerPlayable
         loadPlayables();
