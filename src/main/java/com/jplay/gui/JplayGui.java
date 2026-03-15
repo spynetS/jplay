@@ -56,6 +56,7 @@ public class JplayGui extends JFrame {
 
         // Load files and run registerPlayable
         loadPlayables();
+				
         //getRootPane().setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
     }
 
@@ -73,14 +74,22 @@ public class JplayGui extends JFrame {
     private void loadPlayables() {
         if (defaultPath != null && defaultPath.isDirectory()) {
             new Thread(() -> {
-                List<Playable> players = Main.getPlayablesInFolder(defaultPath.getAbsolutePath());
-                for (Playable player : players) {
-                    loader.registerPlayable(player);
-                }
-                System.out.println("✔ Done loading " + players.size() + " playables.");
-                centerPanel.update();
-                validate();
-                repaint();
+
+										for (Playable player : loader.getAllEntries(true)) {
+												System.out.println("removed " + player.title + " " + player.episode);
+												player.pathExists = 0;
+												loader.registerPlayable(player);
+										}
+										List<Playable> players = Main.getPlayablesInFolder(defaultPath.getAbsolutePath());
+										for (Playable player : players) {
+												System.out.println("added " + player.title + " " + player.episode);
+												player.pathExists = 1;
+												loader.registerPlayable(player);
+										}
+										System.out.println("✔ Done loading " + players.size() + " playables.");
+										centerPanel.update();
+										validate();
+										repaint();
 
             }).start();
         } else {

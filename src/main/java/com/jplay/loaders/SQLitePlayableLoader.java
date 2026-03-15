@@ -78,7 +78,8 @@ public class SQLitePlayableLoader implements PlayableLoader {
 																									imdbRating TEXT,
 																									imdbVotes TEXT,
 																									type TEXT,
-																									totalSeasons TEXT
+																									totalSeasons TEXT,
+																									pathExists INTEGER
 																									);
 				""";
 
@@ -93,8 +94,6 @@ public class SQLitePlayableLoader implements PlayableLoader {
 	
 		@Override
 		public void registerPlayable(Playable playable) {
-
-				playable.pathExists = 1;
 			
 				try (Connection conn = DriverManager.getConnection(DB_URL)) {
 						if(omdb != null) playable = fillMissingMetadata(conn, playable); // fetch info if needed
