@@ -6,6 +6,9 @@ import java.nio.file.Path;
 
 import com.google.gson.annotations.SerializedName;
 
+import com.jplay.player.Player;
+
+
 // this can be an episode in a show or a movie
 public class Playable implements Serializable {
 	@SerializedName("Title")
@@ -78,16 +81,10 @@ public class Playable implements Serializable {
 	public int season;
 	public int episode;
 
-	public MPV mpv = null;
-
-	public Playable(){
-		this.mpv = new MPV();
-	}
-
-	public void play(){
+	public void play(Player player){
 		try{
-			var process = mpv.startMPV(this.path, this.lastPos);
-			this.lastPos =  mpv.waitForMPVExit(process);
+			var process = player.start(this.path, this.lastPos);
+			this.lastPos =  player.waitForExit(process);
 		}catch(IOException e){
 			e.printStackTrace();
 		}

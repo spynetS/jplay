@@ -10,8 +10,9 @@ import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
-import com.jplay.MPV;
+import com.jplay.player.MPV;
 import com.jplay.Playable;
+import com.jplay.converters.PlayerConverter;
 import com.jplay.loaders.PlayableLoader;
 import com.jplay.loaders.SQLitePlayableLoader;
 
@@ -19,6 +20,7 @@ import picocli.CommandLine;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Parameters;
+import com.jplay.player.Player;
 
 import com.jplay.MyVersionProvider;
 
@@ -34,12 +36,16 @@ public class Main implements Runnable {
     @Parameters(index = "0", description = "The path to scan/play", arity = "0..1")
     File inputPath;
 
-    @Option(names = {"--home"}, description = "The default scan path")
-    static File defaultPath = new File(System.getProperty("user.home"), "Movies");
+    @Option(names = {"--home"}, defaultValue = "${sys:user.home}/Movies", description = "The default scan path")
+    static File defaultPath;
 
     @Option(names = {"--season", "-s"}, description = "Season number")
     private Integer season = -1;
 
+		@Option(names={"--player"}, defaultValue="mpv",
+						description = "Player to use: mpv, vlc",
+						converter = PlayerConverter.class)
+    public static Player player;
 
     @Option(names = {"--episode", "-e"}, description = "Episode number")
     private Integer episode = -1;
@@ -119,7 +125,7 @@ public class Main implements Runnable {
 								playable = loader.getPlayable(title,season,episode);
 						}
 
-						playable.play();
+						playable.play(player);
 						loader.registerPlayable(playable);
 						
 				} catch(Exception e) {
