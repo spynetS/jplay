@@ -37,6 +37,7 @@ public class DetailPage extends JPanel {
 				mediaDetails.setLayout(new BorderLayout());
 				mediaDetails.add(poster,BorderLayout.WEST);
 
+			
 				JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
@@ -64,6 +65,9 @@ public class DetailPage extends JPanel {
 				add(mediaDetails,BorderLayout.NORTH);
 				add(episode_panel,BorderLayout.CENTER);
 				add(play_panel,BorderLayout.SOUTH);
+
+				
+				
 		}
 
 		public void update(Playable playable) {

@@ -5,6 +5,7 @@ import java.awt.FlowLayout;
 import java.util.ArrayList;
 
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 
 import com.jplay.Playable;
 import com.jplay.loaders.SQLitePlayableLoader;
@@ -18,6 +19,12 @@ public class TitlePicker extends JPanel {
 		
 		public TitlePicker() {
 				this.setLayout(new FlowLayout(FlowLayout.LEFT, 1, 1));
+				JProgressBar progressBar = new JProgressBar();
+				progressBar.setIndeterminate(true);  // spinning animation
+				progressBar.setString("Loading...");
+				progressBar.setStringPainted(true);
+
+				this.add(progressBar);
 		}
 		
 		public void update(){

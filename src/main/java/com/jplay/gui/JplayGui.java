@@ -24,6 +24,8 @@ public class JplayGui extends JFrame {
     private SQLitePlayableLoader loader = new SQLitePlayableLoader();
     private File defaultPath = new File("/home/spy/Movies");
 
+		public static JProgressBar progressBar = new JProgressBar();
+
     public JplayGui() {
         try {
             UIManager.setLookAndFeel(new FlatDarculaLaf());
@@ -42,6 +44,7 @@ public class JplayGui extends JFrame {
 
 				DetailPage detailsPanel = new DetailPage(cardLayout);
 
+				
 				centerPanel = new TitlePicker();
 				centerPanel.setTitlePickerListener((Playable playable) -> {
 								detailsPanel.update(playable);
@@ -65,6 +68,7 @@ public class JplayGui extends JFrame {
 
 						});
 				setJMenuBar(menu);
+				this.add(progressBar,BorderLayout.SOUTH);
 
         // Load files and run registerPlayable
         loadPlayables();
@@ -86,19 +90,26 @@ public class JplayGui extends JFrame {
     private void loadPlayables() {
         if (defaultPath != null && defaultPath.isDirectory()) {
             new Thread(() -> {
-
-										for (Playable player : loader.getAllEntries(true)) {
-												System.out.println("removed " + player.title + " " + player.episode);
-												player.pathExists = 0;
-												loader.registerPlayable(player);
-										}
 										List<Playable> players = Main.getPlayablesInFolder(defaultPath.getAbsolutePath());
 										for (Playable player : players) {
 												System.out.println("added " + player.title + " " + player.episode);
 												player.pathExists = 1;
 												loader.registerPlayable(player);
 										}
-										System.out.println("✔ Done loading " + players.size() + " playables.");
+										centerPanel.update();
+										validate();
+										repaint();
+
+										for (Playable player : loader.getAllEntries(true)) {
+												System.out.println("removed " + player.title + " " + player.episode);
+												player.pathExists = 0;
+												loader.registerPlayable(player);
+										}
+										for (Playable player : players) {
+												System.out.println("added " + player.title + " " + player.episode);
+												player.pathExists = 1;
+												loader.registerPlayable(player);
+										}
 										centerPanel.update();
 										validate();
 										repaint();

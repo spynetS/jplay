@@ -33,14 +33,25 @@ public class Menu extends JMenuBar {
 								if (result == JFileChooser.APPROVE_OPTION) {
 										File selectedFolder = chooser.getSelectedFile();
 										System.out.println("Selected folder: " + selectedFolder.getAbsolutePath());
-										for(Playable player : Main.getPlayablesInFolder(selectedFolder.getAbsolutePath())) {
-												player.pathExists = 1;
-												loader.registerPlayable(player);
-												if(listener != null)
-														listener.onPlayableUpdate();
+										JplayGui.progressBar.setValue(0);
+										var players = Main.getPlayablesInFolder(selectedFolder.getAbsolutePath());
+										var size = 100/(players.size()-1);
+										JplayGui.progressBar.setString("Loading...");
+										JplayGui.progressBar.setStringPainted(true);
+										JplayGui.progressBar.setVisible(true);
+										new Thread(() -> {
+														for(Playable player : players) {
+																player.pathExists = 1;
+																loader.registerPlayable(player);
+																if(listener != null)
+																		listener.onPlayableUpdate();
 
-
-										}
+																JplayGui.progressBar.setValue(JplayGui.progressBar.getValue()+size);
+														}
+														JplayGui.progressBar.setString("");
+														JplayGui.progressBar.setVisible(false);
+										}).start();
+										
 								} else {
 										System.out.println("No folder selected");
 								}
