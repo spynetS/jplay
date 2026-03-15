@@ -39,9 +39,9 @@ public class JplayGui extends JFrame {
 
         // Center Panel
         centerPanel = new PlayablePanel(this);
-        JScrollPane centerScroll = new JScrollPane(centerPanel);
-        centerScroll.setBorder(null);
-        add(centerScroll, BorderLayout.CENTER);
+        //JScrollPane centerScroll = new JScrollPane(centerPanel);
+				//        centerScroll.setBorder(null);
+        add(centerPanel, BorderLayout.CENTER);
 
         // Sidebar
         leftPanel = new PlayableList(centerPanel);
