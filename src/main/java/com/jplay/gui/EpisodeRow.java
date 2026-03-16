@@ -36,6 +36,10 @@ public class EpisodeRow extends JPanel {
 				JLabel title = new JLabel(episode.title);
 				title.setPreferredSize(new Dimension(200, 20));
 
+				JLabel rating = new JLabel(episode.imdbrating);
+				rating.setPreferredSize(new Dimension(200, 20));
+
+				
 				JButton playButton = new JButton("Play");
 				playButton.addActionListener((ActionEvent e) -> {
 								episode.play(Main.player);
@@ -50,6 +54,8 @@ public class EpisodeRow extends JPanel {
 				this.add(seen);
 				this.add(Box.createHorizontalStrut(10)); // spacing
 				this.add(title);
+				this.add(Box.createHorizontalGlue()); // push play button to the right
+				this.add(rating);
 				this.add(Box.createHorizontalGlue()); // push play button to the right
 
 				if(episode.pathExists == 1) 

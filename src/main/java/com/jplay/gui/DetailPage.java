@@ -2,6 +2,7 @@ package com.jplay.gui;
 
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
+import java.awt.FlowLayout;
 import java.awt.Font;
 
 import javax.swing.BoxLayout;
@@ -23,6 +24,9 @@ public class DetailPage extends JPanel {
 		JPanel mediaDetails = new JPanel();
 		Poster poster = new Poster(null, false);
 		JLabel title = new JLabel();
+		JLabel released = new JLabel();
+		JLabel genre = new JLabel();
+		JLabel imdb = new JLabel();
 		JLabel description = new JLabel();
 
 		EpisodePanel episode_panel = new EpisodePanel();
@@ -45,6 +49,14 @@ public class DetailPage extends JPanel {
 
 				title.setFont(new Font("Serif", Font.PLAIN, 24));
 				panel.add(title);
+				JPanel panel2 = new JPanel();
+
+				panel2.add(released);
+				panel2.add(genre);
+				panel2.add(imdb);
+
+				panel.add(panel2);
+
 				panel.add(description);
 				mediaDetails.add(panel, BorderLayout.CENTER);
 				mediaDetails.add(back,BorderLayout.EAST);
@@ -83,6 +95,10 @@ public class DetailPage extends JPanel {
 				
 				poster.setImage(playable);
 				title.setText(playable.title);
+				released.setText(playable.released);
+				genre.setText(playable.genre);
+				imdb.setText(playable.imdbrating);
+				
 				description.setText(playable.plot);
 		}
 		
