@@ -55,7 +55,7 @@ public class JplayGui extends JFrame {
 				centerPanel.setBorder(new EmptyBorder(20, 20, 20, 20));
 				detailsPanel.setBorder(new EmptyBorder(20, 20, 20, 20));
 				
-				mainPanel.add(new JScrollPane(centerPanel),"grid");
+				mainPanel.add(centerPanel,"grid");
         mainPanel.add(detailsPanel,"details");
 
 				add(mainPanel);
