@@ -88,7 +88,10 @@ public class DetailPage extends JPanel {
 
 				this.playable = playable;
 
-				play.setText("Play latest: "+playable.episode+ " " + playable.title);
+				SQLitePlayableLoader loader = new SQLitePlayableLoader();
+				Playable latest = loader.getPlayable(playable.title,-1,-1);
+				if(latest != null)
+						play.setText("Play latest: "+latest.episode+ " " + latest.title);
 				
 				System.out.println(playable.title);
 				episode_panel.setPlayable(playable);
