@@ -18,6 +18,8 @@ public class DetailPage extends JPanel {
 
 		
 		private Playable playable;
+		JButton play = new JButton("Play latest ");
+		
 		JPanel mediaDetails = new JPanel();
 		Poster poster = new Poster(null, false);
 		JLabel title = new JLabel();
@@ -50,7 +52,7 @@ public class DetailPage extends JPanel {
 				
 
 				JPanel play_panel = new JPanel();
-				JButton play = new JButton("Play latest");
+
 				play.addActionListener(e -> {
 								SQLitePlayableLoader loader = new SQLitePlayableLoader();
 								Playable p = loader.getPlayable(playable.title,-1,-1);
@@ -73,6 +75,8 @@ public class DetailPage extends JPanel {
 		public void update(Playable playable) {
 
 				this.playable = playable;
+
+				play.setText("Play latest: "+playable.episode+ " " + playable.title);
 				
 				System.out.println(playable.title);
 				episode_panel.setPlayable(playable);
