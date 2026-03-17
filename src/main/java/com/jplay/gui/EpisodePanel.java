@@ -56,7 +56,6 @@ public class EpisodePanel extends JPanel {
         seasons.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 				seasonsPanel.add(seasons);
 
-				setSeason(1);
 
 
 				add(seasons,BorderLayout.WEST);
@@ -76,7 +75,7 @@ public class EpisodePanel extends JPanel {
 						
 						EpisodeRow row = new EpisodeRow(episode);
             episodeListPanel.add(row);
-            episodeListPanel.add(Box.createVerticalStrut(5)); // space between episodes
+            episodeListPanel.add(Box.createVerticalStrut(5));
 
 
 						if(!model.contains(String.valueOf(episode.season))) {
@@ -94,12 +93,12 @@ public class EpisodePanel extends JPanel {
 
 		public void setPlayable(Playable playable) {
 				SQLitePlayableLoader loader = new SQLitePlayableLoader();
-
 				for(Playable episode : loader.getAllEpisodes(playable.title)) {
 						playables.add(episode);
 						if(!model.contains(String.valueOf(episode.season))) {
 								model.addElement(String.valueOf(episode.season));
 						}
 				}
+				setSeason(1);
 		}
 }
