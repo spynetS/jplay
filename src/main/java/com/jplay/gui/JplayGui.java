@@ -22,8 +22,8 @@ public class JplayGui extends JFrame {
 		private JPanel mainPanel = new JPanel(cardLayout);
 		
     private SQLitePlayableLoader loader = new SQLitePlayableLoader();
-    private File defaultPath = new File("/home/spy/Movies");
 
+    private File defaultPath = new File(System.getProperty("user.home")+"/Movies");
 		public static JProgressBar progressBar = new JProgressBar();
 
     public JplayGui() {

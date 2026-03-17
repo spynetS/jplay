@@ -37,7 +37,7 @@ public class SQLitePlayableLoader implements PlayableLoader {
 				try{
 						//retrive apikey
 						Properties appProps = new Properties();
-						appProps.load(new FileInputStream("/home/spy/.config/jplay/config.properties"));
+						appProps.load(new FileInputStream(System.getProperty("user.home")+"/.config/jplay/config.properties"));
 						String apikey = appProps.getProperty("apikey");
 						if (apikey != null) {
 								omdb = new OMDB(apikey);
@@ -336,7 +336,7 @@ public class SQLitePlayableLoader implements PlayableLoader {
 
 								for (int i = 0; i < episodes.size(); i++) {
 										Playable ep = episodes.get(i);
-										if (ep.lastPos > 0) {
+										if (ep.lastPos > ep.length*0.1f) {
 												latestWatchedIndex = i;
 										}
 								}
@@ -367,7 +367,6 @@ public class SQLitePlayableLoader implements PlayableLoader {
 						}
 
 				return null;
-
 		}
 
 
