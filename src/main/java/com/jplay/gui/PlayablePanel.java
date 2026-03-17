@@ -42,7 +42,7 @@ public class PlayablePanel extends JPanel {
         try{
 			//retrive apikey
 			Properties appProps = new Properties();
-			appProps.load(new FileInputStream("/home/spy/.config/jplay/config.properties"));
+			appProps.load(new FileInputStream(System.getProperty("user.home")+"/.config/jplay/config.properties"));
 			String apikey = appProps.getProperty("apikey");
 			if (apikey != null) {
 				omdb = new OMDB(apikey);

@@ -15,7 +15,7 @@ public class JplayGui extends JFrame {
     private JScrollPane consoleScroll;
     private PlayablePanel centerPanel;
     private SQLitePlayableLoader loader = new SQLitePlayableLoader();
-    private File defaultPath = new File("/home/spy/Movies");
+    private File defaultPath = new File(System.getProperty("user.home")+"/Movies");
     private PlayableList leftPanel;
 
     public JplayGui() {
