@@ -24,6 +24,8 @@ public class EpisodeRow extends JPanel {
 				this.setAlignmentX(Component.LEFT_ALIGNMENT);
 				this.setBorder(BorderFactory.createEmptyBorder(5,5,5,5)); // padding
 
+				setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));
+
 				// Episode number
 				JLabel number = new JLabel(String.valueOf(episode.episode));
 				number.setPreferredSize(new Dimension(30, 20)); // fixed width for alignment

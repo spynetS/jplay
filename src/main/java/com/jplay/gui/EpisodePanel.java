@@ -5,6 +5,7 @@ import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
@@ -20,6 +21,7 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
+import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -49,21 +51,27 @@ public class EpisodePanel extends JPanel {
 				seasons.addListSelectionListener(new ListSelectionListener() {
 								@Override
 								public void valueChanged(ListSelectionEvent e) {
-										setSeason(Integer.parseInt(seasons.getSelectedValue()));
+										if(seasons.getSelectedValue() != null)
+												setSeason(Integer.parseInt(seasons.getSelectedValue()));
 								}
 						});
 				
         seasons.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-				seasonsPanel.add(seasons);
-
-
-
-				add(seasons,BorderLayout.WEST);
+				JLabel seasonTitle = new JLabel("Seasons");
+				seasonTitle.setFont(new Font("Serif", Font.PLAIN, 16));
+				seasonsPanel.setLayout(new BorderLayout());
+				seasonsPanel.add(seasonTitle, BorderLayout.NORTH);
+				seasonsPanel.add(new JScrollPane(seasons), BorderLayout.CENTER);
+				seasonsPanel.setPreferredSize(new Dimension(100, seasonsPanel.getPreferredSize().height));
+				
+				add(seasonsPanel,BorderLayout.WEST);
 				add(scrollPane, BorderLayout.CENTER);
 
 		}
 
 		public void setSeason(int season) {
+				if(season >= playables.size()) return;
+				
 				JPanel episodeListPanel = new JPanel();
         episodeListPanel.setLayout(new BoxLayout(episodeListPanel, BoxLayout.Y_AXIS));
 
@@ -92,6 +100,10 @@ public class EpisodePanel extends JPanel {
 		}
 
 		public void setPlayable(Playable playable) {
+				playables.clear();
+				seasons.removeAll();
+				model.clear();
+
 				SQLitePlayableLoader loader = new SQLitePlayableLoader();
 				for(Playable episode : loader.getAllEpisodes(playable.title)) {
 						playables.add(episode);

@@ -8,6 +8,7 @@ import java.io.*;
 import java.util.List;
 
 import com.formdev.flatlaf.FlatDarculaLaf;
+import com.formdev.flatlaf.themes.FlatMacDarkLaf;
 import com.jplay.loaders.SQLitePlayableLoader;
 import com.jplay.Playable;
 import com.jplay.Main;
@@ -28,7 +29,7 @@ public class JplayGui extends JFrame {
 
     public JplayGui() {
         try {
-            UIManager.setLookAndFeel(new FlatDarculaLaf());
+            UIManager.setLookAndFeel(new FlatMacDarkLaf());
 						UIManager.put("Button.hoverBackground", new Color(70, 70, 90));
 						UIManager.put("Button.hoverForeground", Color.WHITE);
 						UIManager.put("Button.arc", 20); // rounded corners
