@@ -176,9 +176,9 @@ public class SQLitePlayableLoader implements PlayableLoader {
 		private Playable fillMissingMetadata(Connection conn, Playable playable) {
 				if (playable.imdbID != null && !playable.imdbID.isBlank()) return playable;
 
-				String sql = "SELECT * FROM playables WHERE title = ? AND season = ? AND episode = ? LIMIT 1";
+				String sql = "SELECT * FROM playables WHERE title LIKE ? AND season = ? AND episode = ? LIMIT 1";
 				try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-						pstmt.setString(1, playable.title);
+						pstmt.setString(1, "%" + playable.title + "%");
 						pstmt.setInt(2, playable.season);
 						pstmt.setInt(3, playable.episode);
 
@@ -222,12 +222,12 @@ public class SQLitePlayableLoader implements PlayableLoader {
 
 		@Override
 		public void removePlayable(Playable playable) {
-				String sql = "DELETE FROM playables WHERE title = ? AND season = ? AND episode = ?";
+				String sql = "DELETE FROM playables WHERE title LIKE ? AND season = ? AND episode = ?";
 
 				try (Connection conn = DriverManager.getConnection(DB_URL);
 						 PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-						pstmt.setString(1, playable.title);
+						pstmt.setString(1, "%"+playable.title+"%");
 						pstmt.setInt(2, playable.season);
 						pstmt.setInt(3, playable.episode);
 						pstmt.executeUpdate();
@@ -256,7 +256,7 @@ public class SQLitePlayableLoader implements PlayableLoader {
 						sql = """
 								SELECT *
 								FROM playables
-								WHERE title = ? AND episode = ?
+								WHERE title LIKE ? AND episode = ?
 								ORDER BY season ASC
 								LIMIT 1
 								""";
@@ -265,7 +265,7 @@ public class SQLitePlayableLoader implements PlayableLoader {
 						sql = """
 								SELECT *
 								FROM playables
-								WHERE title = ? AND season = ?
+								WHERE title LIKE ? AND season = ?
 								ORDER BY episode ASC
 								LIMIT 1
 								""";
@@ -274,14 +274,14 @@ public class SQLitePlayableLoader implements PlayableLoader {
 						sql = """
 								SELECT *
 								FROM playables
-								WHERE title = ? AND season = ? AND episode = ?
+								WHERE title LIKE ? AND season = ? AND episode = ?
 								""";
 								}
 
 				try (Connection conn = DriverManager.getConnection(DB_URL);
 						 PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-						pstmt.setString(1, search);
+						pstmt.setString(1, "%"+search+"%");
 						if (season == -1) {
 								pstmt.setInt(2, episode);
 						} else if (episode == -1) {
@@ -312,14 +312,14 @@ public class SQLitePlayableLoader implements PlayableLoader {
 				String sql = """
 						SELECT *
 						FROM playables
-						WHERE title = ?
+						WHERE title LIKE ?
 						ORDER BY season, episode
 						""";
 
 						try (Connection conn = DriverManager.getConnection(DB_URL);
 								 PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-								pstmt.setString(1, title);
+								pstmt.setString(1, "%"+title+"%");
 
 								List<Playable> episodes = new ArrayList<>();
 
@@ -435,12 +435,12 @@ public class SQLitePlayableLoader implements PlayableLoader {
 		@Override
 		public List<Playable> getAllEpisodes(String title) {
 				List<Playable> list = new ArrayList<>();
-				String sql = "SELECT * FROM playables WHERE title = ? ORDER BY season, episode";
+				String sql = "SELECT * FROM playables WHERE title LIKE ? ORDER BY season, episode";
 
 				try (Connection conn = DriverManager.getConnection(DB_URL);
 						 PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-						stmt.setString(1, title);
+						stmt.setString(1, "%" + title + "%");
 						ResultSet rs = stmt.executeQuery();
 
 						while (rs.next()) {
