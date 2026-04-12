@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 
 APP_NAME="jplay"
-VERSION="1.1.2"
+VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
 INSTALL_DIR="/usr/local/share/java/$APP_NAME"
 BIN_PATH="/usr/local/bin/$APP_NAME"
 

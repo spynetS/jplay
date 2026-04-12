@@ -109,7 +109,7 @@ private String extractErrorMessage(String json) {
 		Playable info = gson.fromJson(response.toString(), Playable.class);
 
 		// Populate the input playable with fetched metadata
-		    playable.imdbID = info.imdbID;
+		  playable.imdbID = info.imdbID;
 			playable.year = info.year;
 			playable.rated = info.rated;
 			playable.released = info.released;

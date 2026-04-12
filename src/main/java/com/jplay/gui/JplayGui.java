@@ -1,10 +1,14 @@
 package com.jplay.gui;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+
 import java.awt.*;
 import java.io.*;
 import java.util.List;
-import com.formdev.flatlaf.FlatLightLaf;
+
+import com.formdev.flatlaf.FlatDarculaLaf;
+import com.formdev.flatlaf.themes.FlatMacDarkLaf;
 import com.jplay.loaders.SQLitePlayableLoader;
 import com.jplay.Playable;
 import com.jplay.Main;
@@ -12,15 +16,23 @@ import com.jplay.Main;
 public class JplayGui extends JFrame {
 
     private JTextArea consoleArea = new JTextArea();
-    private JScrollPane consoleScroll;
-    private PlayablePanel centerPanel;
+		//    private PlayablePanel centerPanel;
+		private TitlePicker centerPanel;
+
+		private CardLayout cardLayout = new CardLayout();
+		private JPanel mainPanel = new JPanel(cardLayout);
+		
     private SQLitePlayableLoader loader = new SQLitePlayableLoader();
+
     private File defaultPath = new File(System.getProperty("user.home")+"/Movies");
-    private PlayableList leftPanel;
+		public static JProgressBar progressBar = new JProgressBar();
 
     public JplayGui() {
         try {
-            UIManager.setLookAndFeel(new FlatLightLaf());
+            UIManager.setLookAndFeel(new FlatMacDarkLaf());
+						UIManager.put("Button.hoverBackground", new Color(70, 70, 90));
+						UIManager.put("Button.hoverForeground", Color.WHITE);
+						UIManager.put("Button.arc", 20); // rounded corners
         } catch (Exception ex) {
             System.err.println("Failed to initialize LaF");
         }
@@ -31,38 +43,38 @@ public class JplayGui extends JFrame {
         setLocationRelativeTo(null);
         setLayout(new BorderLayout(10, 10));
 
-        // Header
-        JLabel headerLabel = new JLabel("🎵 JPlay Media Browser");
-        headerLabel.setFont(new Font("SansSerif", Font.BOLD, 22));
-        headerLabel.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 10));
-        add(headerLabel, BorderLayout.NORTH);
+				DetailPage detailsPanel = new DetailPage(cardLayout);
 
-        // Center Panel
-        centerPanel = new PlayablePanel(this);
-        //JScrollPane centerScroll = new JScrollPane(centerPanel);
-				//        centerScroll.setBorder(null);
-        add(centerPanel, BorderLayout.CENTER);
+				
+				centerPanel = new TitlePicker();
+				centerPanel.setTitlePickerListener((Playable playable) -> {
+								detailsPanel.update(playable);
+								cardLayout.show(mainPanel, "details");
+						});
 
-        // Sidebar
-        leftPanel = new PlayableList(centerPanel);
-        leftPanel.setPreferredSize(new Dimension(220, 0));
-        leftPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 1, Color.GRAY));
-        add(leftPanel, BorderLayout.WEST);
 
-        // Console Panel
-        consoleArea.setEditable(false);
-        consoleArea.setFont(new Font("Monospaced", Font.PLAIN, 12));
-        consoleScroll = new JScrollPane(consoleArea);
-        consoleScroll.setPreferredSize(new Dimension(1000, 150));
-        add(consoleScroll, BorderLayout.SOUTH);
+				centerPanel.setBorder(new EmptyBorder(20, 20, 20, 20));
+				detailsPanel.setBorder(new EmptyBorder(20, 20, 20, 20));
+				
+				mainPanel.add(centerPanel,"grid");
+        mainPanel.add(detailsPanel,"details");
 
-        // Redirect stdout to console
-        redirectSystemOut();
+				add(mainPanel);
+				Menu menu = new Menu();
+				menu.setMenuListener(() -> {
+								System.out.println("asd");
+								centerPanel.update();
+								validate();
+								repaint();
+
+						});
+				setJMenuBar(menu);
+				this.add(progressBar,BorderLayout.SOUTH);
 
         // Load files and run registerPlayable
         loadPlayables();
-
-        getRootPane().setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+				
+        //getRootPane().setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
     }
 
     private void redirectSystemOut() {
@@ -79,14 +91,29 @@ public class JplayGui extends JFrame {
     private void loadPlayables() {
         if (defaultPath != null && defaultPath.isDirectory()) {
             new Thread(() -> {
-                List<Playable> players = Main.getPlayablesInFolder(defaultPath.getAbsolutePath());
-                for (Playable player : players) {
-                    loader.registerPlayable(player);
-                }
-                System.out.println("✔ Done loading " + players.size() + " playables.");
-                leftPanel.updateList();
-                validate();
-                repaint();
+										List<Playable> players = Main.getPlayablesInFolder(defaultPath.getAbsolutePath());
+										for (Playable player : players) {
+												System.out.println("added " + player.title + " " + player.episode);
+												player.pathExists = 1;
+												loader.registerPlayable(player);
+										}
+										centerPanel.update();
+										validate();
+										repaint();
+
+										for (Playable player : loader.getAllEntries(true)) {
+												System.out.println("removed " + player.title + " " + player.episode);
+												player.pathExists = 0;
+												loader.registerPlayable(player);
+										}
+										for (Playable player : players) {
+												System.out.println("added " + player.title + " " + player.episode);
+												player.pathExists = 1;
+												loader.registerPlayable(player);
+										}
+										centerPanel.update();
+										validate();
+										repaint();
 
             }).start();
         } else {

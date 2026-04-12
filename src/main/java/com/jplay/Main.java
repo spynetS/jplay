@@ -45,7 +45,7 @@ public class Main implements Runnable {
 		@Option(names={"--player"}, defaultValue="mpv",
 						description = "Player to use: mpv, vlc",
 						converter = PlayerConverter.class)
-    public static Player player;
+    public static Player player = new MPV();
 
     @Option(names = {"--episode", "-e"}, description = "Episode number")
     private Integer episode = -1;
@@ -72,6 +72,7 @@ public class Main implements Runnable {
 
     @Override
     public void run() {
+        System.out.println("RUNRUN");
         SQLitePlayableLoader loader = new SQLitePlayableLoader();
         scanDefault();
 				try{
@@ -169,6 +170,7 @@ public class Main implements Runnable {
                 p.lastPos = -1;
                 p.season = g.getSeason();     // Default for movies, change if you want
                 p.episode = g.getEpisode();
+                p.pathExists = 1;
                 return p;
             }
         }
@@ -196,8 +198,8 @@ public class Main implements Runnable {
 
     @Command(name = "list", description = "List all registered playables")
     static class ListCommand implements Runnable {
-        @Option(names = {"--title"}, description = "Only list episodes for this title")
-        String title;
+        @Parameters(arity = "0..*", description = "Title to list episodes (fuzzy works)")
+        private String title;
 
         @Option(names = "-p", description = "Show path to the video file")
         boolean showPath;
@@ -205,9 +207,9 @@ public class Main implements Runnable {
 				@Option(names = "--history", description = "Show all recorded series watched")
         boolean exists;
 
-
         @Override
         public void run() {
+
             PlayableLoader loader = new SQLitePlayableLoader();
 						scanDefault();
 						// if a title is set list the episodes
@@ -259,7 +261,6 @@ public class Main implements Runnable {
         public void run() {
             SwingUtilities.invokeLater(() -> {
                     new JplayGui().setVisible(true);
-
             });
         }
     }
