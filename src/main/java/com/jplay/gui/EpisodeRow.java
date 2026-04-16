@@ -13,12 +13,13 @@ import javax.swing.JPanel;
 
 import com.jplay.Main;
 import com.jplay.Playable;
-import com.jplay.loaders.SQLitePlayableLoader;
+import com.jplay.loaders.PlayableLoader;
+
 
 public class EpisodeRow extends JPanel {
 
 		public EpisodeRow(Playable episode) {
-				SQLitePlayableLoader loader = new SQLitePlayableLoader();
+				PlayableLoader loader = Main.loader;
 				
 				this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 				this.setAlignmentX(Component.LEFT_ALIGNMENT);

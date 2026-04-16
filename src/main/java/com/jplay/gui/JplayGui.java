@@ -9,7 +9,8 @@ import java.util.List;
 
 import com.formdev.flatlaf.FlatDarculaLaf;
 import com.formdev.flatlaf.themes.FlatMacDarkLaf;
-import com.jplay.loaders.SQLitePlayableLoader;
+import com.jplay.loaders.PlayableLoader;
+
 import com.jplay.Playable;
 import com.jplay.Main;
 
@@ -22,7 +23,7 @@ public class JplayGui extends JFrame {
 		private CardLayout cardLayout = new CardLayout();
 		private JPanel mainPanel = new JPanel(cardLayout);
 		
-    private SQLitePlayableLoader loader = new SQLitePlayableLoader();
+    private PlayableLoader loader = Main.loader;
 
     private File defaultPath = new File(System.getProperty("user.home")+"/Movies");
 		public static JProgressBar progressBar = new JProgressBar();

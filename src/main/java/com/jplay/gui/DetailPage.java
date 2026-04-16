@@ -13,7 +13,8 @@ import javax.swing.border.EmptyBorder;
 
 import com.jplay.Main;
 import com.jplay.Playable;
-import com.jplay.loaders.SQLitePlayableLoader;
+import com.jplay.loaders.PlayableLoader;
+
 
 public class DetailPage extends JPanel {
 
@@ -66,7 +67,7 @@ public class DetailPage extends JPanel {
 				JPanel play_panel = new JPanel();
 
 				play.addActionListener(e -> {
-								SQLitePlayableLoader loader = new SQLitePlayableLoader();
+								PlayableLoader loader = Main.loader;
 								Playable p = loader.getPlayable(playable.title,-1,-1);
 								p.play(Main.player);
 								loader.registerPlayable(p);
@@ -88,7 +89,7 @@ public class DetailPage extends JPanel {
 
 				this.playable = playable;
 
-				SQLitePlayableLoader loader = new SQLitePlayableLoader();
+				PlayableLoader loader = Main.loader;
 				Playable latest = loader.getPlayable(playable.title,-1,-1);
 				if(latest != null)
 						play.setText("Play latest: "+latest.episode+ " " + latest.title);

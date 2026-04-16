@@ -9,7 +9,8 @@ import javax.swing.JMenuItem;
 
 import com.jplay.Main;
 import com.jplay.Playable;
-import com.jplay.loaders.SQLitePlayableLoader;
+import com.jplay.loaders.PlayableLoader;
+
 
 public class Menu extends JMenuBar {
 
@@ -19,7 +20,7 @@ public class Menu extends JMenuBar {
 
 		MenuListener listener;
 		
-		SQLitePlayableLoader loader = new SQLitePlayableLoader();
+		PlayableLoader loader = Main.loader;
 		public Menu() {
 				JMenu menu = new JMenu("File");
 

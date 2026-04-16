@@ -27,7 +27,8 @@ import javax.swing.event.ListSelectionListener;
 
 import com.jplay.Main;
 import com.jplay.Playable;
-import com.jplay.loaders.SQLitePlayableLoader;
+import com.jplay.loaders.PlayableLoader;
+
 
 
 public class EpisodePanel extends JPanel {
@@ -75,7 +76,7 @@ public class EpisodePanel extends JPanel {
 				JPanel episodeListPanel = new JPanel();
         episodeListPanel.setLayout(new BoxLayout(episodeListPanel, BoxLayout.Y_AXIS));
 
-				SQLitePlayableLoader loader = new SQLitePlayableLoader();
+				PlayableLoader loader = Main.loader;
 				
 
         for (Playable episode : playables) {
@@ -104,7 +105,7 @@ public class EpisodePanel extends JPanel {
 				seasons.removeAll();
 				model.clear();
 
-				SQLitePlayableLoader loader = new SQLitePlayableLoader();
+				PlayableLoader loader = Main.loader;
 				for(Playable episode : loader.getAllEpisodes(playable.title)) {
 						playables.add(episode);
 						if(!model.contains(String.valueOf(episode.season))) {

@@ -7,8 +7,10 @@ import java.util.ArrayList;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 
+import com.jplay.Main;
 import com.jplay.Playable;
-import com.jplay.loaders.SQLitePlayableLoader;
+import com.jplay.loaders.PlayableLoader;
+
 
 public class TitlePicker extends JPanel {
 
@@ -29,7 +31,7 @@ public class TitlePicker extends JPanel {
 		
 		public void update(){
 				removeAll();
-				SQLitePlayableLoader loader = new SQLitePlayableLoader();
+				PlayableLoader loader = Main.loader;
 				List<Playable> playables = loader.getAllEntries(true);
 
 				ArrayList<String> added = new ArrayList<>();

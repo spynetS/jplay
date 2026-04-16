@@ -13,8 +13,10 @@ import javax.swing.SwingUtilities;
 import com.jplay.player.MPV;
 import com.jplay.Playable;
 import com.jplay.converters.PlayerConverter;
+import com.jplay.loaders.MySQLPlayableLoader;
 import com.jplay.loaders.PlayableLoader;
 import com.jplay.loaders.SQLitePlayableLoader;
+
 
 import picocli.CommandLine;
 import picocli.CommandLine.Option;
@@ -47,6 +49,10 @@ public class Main implements Runnable {
 						converter = PlayerConverter.class)
     public static Player player = new MPV();
 
+    //public static PlayableLoader loader = new SQLitePlayableLoader();
+    public static PlayableLoader loader = new MySQLPlayableLoader();
+
+
     @Option(names = {"--episode", "-e"}, description = "Episode number")
     private Integer episode = -1;
 
@@ -54,12 +60,11 @@ public class Main implements Runnable {
     private String title;
 
     public static void main(String[] args) {
-
         CommandLine.run(new Main(), args);
     }
 
     public static void scanDefault(){
-        SQLitePlayableLoader loader = new SQLitePlayableLoader();
+        PlayableLoader loader = Main.loader;
         if(defaultPath != null && defaultPath.isDirectory()){
             List<Playable> players = getPlayablesInFolder(defaultPath.getAbsolutePath());
             for(Playable player : players){
@@ -72,8 +77,7 @@ public class Main implements Runnable {
 
     @Override
     public void run() {
-        System.out.println("RUNRUN");
-        SQLitePlayableLoader loader = new SQLitePlayableLoader();
+        PlayableLoader loader = Main.loader;
         scanDefault();
 				try{
 						Playable playable = null;
@@ -181,7 +185,7 @@ public class Main implements Runnable {
     static class RefreshCommand implements Runnable {
 				@Override
 				public void run() {
-						SQLitePlayableLoader loader = new SQLitePlayableLoader();
+						PlayableLoader loader = Main.loader;
 
 						if(defaultPath != null && defaultPath.isDirectory()){
 								List<Playable> players = getPlayablesInFolder(defaultPath.getAbsolutePath());
@@ -210,7 +214,7 @@ public class Main implements Runnable {
         @Override
         public void run() {
 
-            PlayableLoader loader = new SQLitePlayableLoader();
+            PlayableLoader loader = Main.loader;
 						scanDefault();
 						// if a title is set list the episodes
             if (title != null) {
